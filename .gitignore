@@ -1,4 +1,5 @@
-node_modules
-media
 .vscode-test/
+*.mp3
 *.vsix
+media
+node_modules
