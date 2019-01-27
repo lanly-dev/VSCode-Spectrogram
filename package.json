@@ -13,7 +13,25 @@
     "*"
   ],
   "main": "./extension.js",
-  "contributes": {},
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "audio-explorer",
+          "title": "audio Explorer",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "views": {
+      "audio-explorer": [
+        {
+          "id": "audios",
+          "name": "audios"
+        }
+      ]
+    }
+  },
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test"

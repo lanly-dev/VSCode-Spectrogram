@@ -1,8 +1,10 @@
-.vscode/**
-.vscode-test/**
-test/**
-.gitignore
-vsc-extension-quickstart.md
-**/jsconfig.json
 **/*.map
 **/.eslintrc.json
+**/jsconfig.json
+.git
+.gitignore
+.vscode-test/**
+.vscode/**
+package-lock
+test/**
+vsc-extension-quickstart.md
