@@ -6,8 +6,12 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
 
   body
-      h1 Firstname : #{firstname}
-      h1 Lastname : #{lastname}
-  script(nonce=`${nonce}`, src=`${uri}`)
+    h1 Firstname : #{firstname}
+    h1 Lastname : #{lastname}
+    .sketch
+
+  script(nonce=`${nonce}`, src=`${vue_uri}`)
+  script(nonce=`${nonce}`, src=`${p5_uri}`)
+  script(nonce=`${nonce}`, src=`${sk_uri}`)
   script(nonce=`${nonce}`).
-      console.log("#{uri}")
+      console.log('#{p5_uri}')

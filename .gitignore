@@ -3,3 +3,4 @@
 *.vsix
 media
 node_modules
+package-lock.json
