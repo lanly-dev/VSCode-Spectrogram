@@ -32,16 +32,19 @@ function activate(context) {
     // localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
   })
   const vue_template_uri = (vscode.Uri.file(path.join(context.extensionPath, 'src', 'vue_template.js'))).with({scheme: 'vscode-resource'})
+  const song_path = (vscode.Uri.file(path.join(context.extensionPath, 'angel.mp3'))).with({scheme: 'vscode-resource'})
   const sk_uri = (vscode.Uri.file(path.join(context.extensionPath, 'src', 'bundle.js'))).with({scheme: 'vscode-resource'})
   const semjs_uri = (vscode.Uri.file(semjs_path)).with({scheme: 'vscode-resource'})
   const semcss_uri = (vscode.Uri.file(semcss_path)).with({scheme: 'vscode-resource'})
   const jquery_uri = (vscode.Uri.file(jquery_path)).with({scheme: 'vscode-resource'})
+
   wv.webview.html = compiledFunction({
     sk_uri: sk_uri,
     semjs_uri: semjs_uri,
     semcss_uri: semcss_uri,
     vue_uri: vue_template_uri,
-    jquery_uri: jquery_uri, 
+    jquery_uri: jquery_uri,
+    song_path: song_path,
     nonce: '123'
   })
 }

@@ -5,6 +5,8 @@
 .gitignore
 .vscode-test/**
 .vscode/**
+*.mp3
+*.ogg
 package-lock
 test/**
 vsc-extension-quickstart.md
