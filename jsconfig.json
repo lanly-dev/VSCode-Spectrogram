@@ -9,6 +9,7 @@
 	},
 	"exclude": [
 		"node_modules",
-		"src/bundle.js"
+		"src/bundle.js",
+		"src/ref"
 	]
 }
