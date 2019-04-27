@@ -15,13 +15,7 @@ function activate(context) {
   // let files = vscode.workspace.findFiles('**/*', null, 100)
   // files.then(data => console.log(data), error => console.error(error))
 
-  const test = new tv.Treeview(context)
-
-  test.specViewer.onDidChangeSelection(file => {
-    console.log(file)
-    console.log(test.specViewer.selection)
-  })
-
+  const specTV = new tv.Treeview(context)
 
   // vscode.workspace.onDidChangeConfiguration()
 
@@ -33,6 +27,13 @@ function activate(context) {
     // And restric the webview to only loading content from our extension's `media` directory.
     // localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
   })
+
+  specTV.specViewer.onDidChangeSelection(file => {
+    if(specTV.specViewer.selection.indexOf('.mp3') != -1)
+      wv.webview.postMessage(specTV.specViewer.selection)
+  })
+
+
   const song_path = (vscode.Uri.file(path.join(context.extensionPath, 'beat.mp3'))).with({scheme: 'vscode-resource'})
   const bundle_uri = (vscode.Uri.file(path.join(context.extensionPath, 'src', 'bundle.js'))).with({scheme: 'vscode-resource'})
   const ctmcss_uri = (vscode.Uri.file(path.join(context.extensionPath, 'src', 'custom.css'))).with({scheme: 'vscode-resource'})

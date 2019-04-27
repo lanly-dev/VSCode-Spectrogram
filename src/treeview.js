@@ -3,15 +3,11 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 
-
 class Treeview {
   constructor(context) {
-    const treeDataProvider = new SpecTreeDataProvider(
-      vscode.workspace.rootPath
-    )
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', treeDataProvider));
-    this.specViewer = vscode.window.createTreeView('spec', { treeDataProvider });
-
+    const treeDataProvider = new SpecTreeDataProvider(vscode.workspace.rootPath)
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', treeDataProvider))
+    this.specViewer = vscode.window.createTreeView('spec', { treeDataProvider })
   }
 }
 
@@ -37,23 +33,21 @@ class SpecTreeDataProvider {
     }
 
     if (element) {
-      return  this.getFiles(path.join(element.filePath, element.label))
-
+      return this.getFiles(path.join(element.filePath, element.label))
     } else {
       return this.getFiles(this.workspaceRoot)
     }
   }
 
   getFiles(thePath) {
-    const toFileItem = (name, path, type) =>{
+    const toFileItem = (name, path, type) => {
       if (type == 'directory') {
         let descriptionText, collapsibleState
-        const filesCount = (fs.readdirSync(`${path}\\${name}`).filter(this.isMp3)).length
-        if(filesCount > 0) {
+        const filesCount = fs.readdirSync(`${path}\\${name}`).filter(this.isMp3).length
+        if (filesCount > 0) {
           collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
           descriptionText = `${filesCount} song`
-          if(filesCount > 1) descriptionText += 's'
-
+          if (filesCount > 1) descriptionText += 's'
         } else {
           collapsibleState = vscode.TreeItemCollapsibleState.None
           descriptionText = 'Empty'
@@ -72,7 +66,6 @@ class SpecTreeDataProvider {
     const mp3filesItem = mp3s.map(name => toFileItem(name, thePath, 'mp3'))
 
     return subdirsItem.concat(mp3filesItem)
-
   }
 
   isMp3(name) {
