@@ -1,6 +1,6 @@
 {
-  "name": "audio",
-  "displayName": "audio",
+  "name": "spec",
+  "displayName": "spec",
   "description": "description",
   "version": "0.0.1",
   "engines": {
@@ -14,20 +14,11 @@
   ],
   "main": "src/extension.js",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "audio-explorer",
-          "title": "audio Explorer",
-          "icon": "media/dep.svg"
-        }
-      ]
-    },
     "views": {
-      "audio-explorer": [
+      "explorer": [
         {
-          "id": "audios",
-          "name": "audios"
+          "id": "spec",
+          "name": "Spec Explorer"
         }
       ]
     }

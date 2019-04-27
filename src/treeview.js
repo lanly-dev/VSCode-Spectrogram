@@ -6,16 +6,16 @@ const fs = require('fs')
 
 class Treeview {
   constructor(context) {
-    const treeDataProvider = new AudioTreeDataProvider(
+    const treeDataProvider = new SpecTreeDataProvider(
       vscode.workspace.rootPath
     )
-    this.audiosViewer = vscode.window.createTreeView('audios', {
-      treeDataProvider
-    })
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', treeDataProvider));
+    this.specViewer = vscode.window.createTreeView('spec', { treeDataProvider });
+
   }
 }
 
-class AudioTreeDataProvider {
+class SpecTreeDataProvider {
   constructor(workspaceRoot) {
     this.workspaceRoot = workspaceRoot
     this._onDidChangeTreeData = new vscode.EventEmitter()
@@ -38,7 +38,7 @@ class AudioTreeDataProvider {
 
     if (element) {
       return  this.getFiles(path.join(element.filePath, element.label))
-      
+
     } else {
       return this.getFiles(this.workspaceRoot)
     }
@@ -53,7 +53,7 @@ class AudioTreeDataProvider {
           collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
           descriptionText = `${filesCount} song`
           if(filesCount > 1) descriptionText += 's'
-          
+
         } else {
           collapsibleState = vscode.TreeItemCollapsibleState.None
           descriptionText = 'Empty'

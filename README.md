@@ -1,6 +1,6 @@
-# audio README
+# spec README
 
-This is the README for your extension "audio". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "spec". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

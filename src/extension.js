@@ -14,15 +14,15 @@ function activate(context) {
   vscode.window.showInformationMessage('Hello World!')
   // let files = vscode.workspace.findFiles('**/*', null, 100)
   // files.then(data => console.log(data), error => console.error(error))
-  
-  const test = new tv.Treeview
 
-  test.audiosViewer.onDidChangeSelection(file => {
+  const test = new tv.Treeview(context)
+
+  test.specViewer.onDidChangeSelection(file => {
     console.log(file)
-    console.log(test.audiosViewer.selection)
+    console.log(test.specViewer.selection)
   })
 
-  
+
   // vscode.workspace.onDidChangeConfiguration()
 
   const compiledFunction = pug.compileFile(`${__dirname}\\index.pug`)

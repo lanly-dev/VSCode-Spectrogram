@@ -1,9 +1,9 @@
 html
   head
-    title Audio
+    title Spec
     meta(charset='UTF-8')
     meta(http-equiv='Content-Security-Policy',
-      content=`default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}' https:; font-src data: vscode-resource: https:; worker-src blob:; connect-src vscode-resource:`)
+      content=`default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}' https:; font-src data: vscode-resource: https:; worker-src blob:; connect-src vscode-resource: ws:`)
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     script(nonce=`${nonce}`).
       rootPath = '#{song_path}'
