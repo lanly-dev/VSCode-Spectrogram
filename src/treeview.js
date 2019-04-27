@@ -3,6 +3,7 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 
+
 class Treeview {
   constructor(context) {
     const treeDataProvider = new AudioTreeDataProvider(
@@ -46,16 +47,26 @@ class AudioTreeDataProvider {
   getFiles(thePath) {
     const toFileItem = (name, path, type) =>{
       if (type == 'directory') {
-        return new fileItem(name, path, vscode.TreeItemCollapsibleState.Collapsed)
+        let descriptionText, collapsibleState
+        const filesCount = (fs.readdirSync(`${path}\\${name}`).filter(this.isMp3)).length
+        if(filesCount > 0) {
+          collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
+          descriptionText = `${filesCount} song`
+          if(filesCount > 1) descriptionText += 's'
+          
+        } else {
+          collapsibleState = vscode.TreeItemCollapsibleState.None
+          descriptionText = 'Empty'
+        }
+        return new fileItem(name, path, collapsibleState, descriptionText)
       } else {
         return new fileItem(name, path, vscode.TreeItemCollapsibleState.None)
       }
     }
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
-    const isMp3 = name => name.indexOf('.mp3') != -1 ? true : false
 
     const subdirs = fs.readdirSync(thePath).filter(isDirectory)
-    const mp3s = fs.readdirSync(thePath).filter(isMp3)
+    const mp3s = fs.readdirSync(thePath).filter(this.isMp3)
 
     const subdirsItem = subdirs.map(name => toFileItem(name, thePath, 'directory'))
     const mp3filesItem = mp3s.map(name => toFileItem(name, thePath, 'mp3'))
@@ -63,22 +74,27 @@ class AudioTreeDataProvider {
     return subdirsItem.concat(mp3filesItem)
 
   }
+
+  isMp3(name) {
+    return name.indexOf('.mp3') != -1 ? true : false
+  }
 }
 
 class fileItem extends vscode.TreeItem {
-  constructor(label, filePath, collapsibleState, command) {
+  constructor(label, filePath, collapsibleState, descriptionText, command) {
     super(label, collapsibleState)
     this.label = label
     this.collapsibleState = collapsibleState
     this.filePath = filePath
     this.command = command
     this.contextValue = 'dependency'
+    this.descriptionText = descriptionText
   }
   get tooltip() {
     return `${this.filePath}\\${this.label}`
   }
   get description() {
-    return this.label
+    return this.descriptionText
   }
 }
 

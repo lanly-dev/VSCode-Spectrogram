@@ -17,9 +17,12 @@ function activate(context) {
   
   const test = new tv.Treeview
 
-  test.audiosViewer.onDidChangeSelection((one, two, three) => {
-    console.log(one, two, three)
+  test.audiosViewer.onDidChangeSelection(file => {
+    console.log(file)
+    console.log(test.audiosViewer.selection)
   })
+
+  
   // vscode.workspace.onDidChangeConfiguration()
 
   const compiledFunction = pug.compileFile(`${__dirname}\\index.pug`)
