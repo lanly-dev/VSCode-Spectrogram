@@ -5,7 +5,7 @@ const pug = require('pug')
 const path = require('path')
 const jquery_path = require.resolve('jquery')
 const semjs_path = require.resolve('semantic-ui-css')
-const semcss_path = require.resolve('semantic-ui-css/semantic.min.css');
+const semcss_path = require.resolve('semantic-ui-css/semantic.min.css')
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -21,25 +21,27 @@ function activate(context) {
 
   const compiledFunction = pug.compileFile(`${__dirname}\\index.pug`)
 
-  const wv = vscode.window.createWebviewPanel('something','Cat Coding', vscode.ViewColumn.One, {
+  const wv = vscode.window.createWebviewPanel('something', 'Cat Coding', vscode.ViewColumn.One, {
     // Enable javascript in the webview
-    enableScripts: true,
+    enableScripts: true
     // And restric the webview to only loading content from our extension's `media` directory.
     // localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
   })
 
   specTV.specViewer.onDidChangeSelection(file => {
-    if(specTV.specViewer.selection.indexOf('.mp3') != -1)
-      wv.webview.postMessage(specTV.specViewer.selection)
+    const fullFilePath = file.selection[0].fullFilePath
+    if (fullFilePath.indexOf('.mp3') != -1) {
+      const song_path = vscode.Uri.file(fullFilePath).with({ scheme: 'vscode-resource' })
+      wv.webview.postMessage(`${song_path}`)
+    }
   })
 
-
-  const song_path = (vscode.Uri.file(path.join(context.extensionPath, 'beat.mp3'))).with({scheme: 'vscode-resource'})
-  const bundle_uri = (vscode.Uri.file(path.join(context.extensionPath, 'src', 'bundle.js'))).with({scheme: 'vscode-resource'})
-  const ctmcss_uri = (vscode.Uri.file(path.join(context.extensionPath, 'src', 'custom.css'))).with({scheme: 'vscode-resource'})
-  const semjs_uri = (vscode.Uri.file(semjs_path)).with({scheme: 'vscode-resource'})
-  const semcss_uri = (vscode.Uri.file(semcss_path)).with({scheme: 'vscode-resource'})
-  const jquery_uri = (vscode.Uri.file(jquery_path)).with({scheme: 'vscode-resource'})
+  const song_path = vscode.Uri.file(path.join(context.extensionPath, 'beat.mp3')).with({ scheme: 'vscode-resource' })
+  const bundle_uri = vscode.Uri.file(path.join(context.extensionPath, 'src', 'bundle.js')).with({ scheme: 'vscode-resource' })
+  const ctmcss_uri = vscode.Uri.file(path.join(context.extensionPath, 'src', 'custom.css')).with({ scheme: 'vscode-resource' })
+  const semjs_uri = vscode.Uri.file(semjs_path).with({ scheme: 'vscode-resource' })
+  const semcss_uri = vscode.Uri.file(semcss_path).with({ scheme: 'vscode-resource' })
+  const jquery_uri = vscode.Uri.file(jquery_path).with({ scheme: 'vscode-resource' })
 
   wv.webview.html = compiledFunction({
     bundle_uri: bundle_uri,

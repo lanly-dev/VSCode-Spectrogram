@@ -79,6 +79,7 @@ class fileItem extends vscode.TreeItem {
     this.label = label
     this.collapsibleState = collapsibleState
     this.filePath = filePath
+    this.fullFilePath = `${this.filePath}\\${this.label}`
     this.command = command
     this.contextValue = 'dependency'
     this.descriptionText = descriptionText
