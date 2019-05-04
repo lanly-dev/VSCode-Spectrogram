@@ -8,11 +8,12 @@
   const HEIGHT = (canvasElement.height = 512)
 
   let playing, id
-
   window.addEventListener('message', event => {
     if (playing) playing.close().then(cancelAnimationFrame(id))
     playing = player(event.data)
+    vscode.postMessage('ok')
   })
+  vscode.postMessage('ready')
 
   function player(path) {
     const audioCtx = new AudioContext()
