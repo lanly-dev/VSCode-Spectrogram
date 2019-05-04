@@ -1,11 +1,11 @@
 ;(() => {
   const vscode = acquireVsCodeApi()
-  const oldState = vscode.getState()
 
   const canvasElement = document.getElementById('canvas')
   const canvasContext = canvasElement.getContext('2d')
   const WIDTH = (canvasElement.width = window.innerWidth)
   const HEIGHT = (canvasElement.height = 512)
+  const susresBtn = document.querySelector('#susresbtn')
 
   let playing, id
   window.addEventListener('message', event => {
@@ -53,19 +53,29 @@
 
             song.connect(audioCtx.destination)
             song.connect(analyser)
-            // // play.onclick = function() {
-            // song.playbackRate.value = 2
+            susresBtn.onclick = () => {
+              if (audioCtx.state === 'running') {
+                audioCtx.suspend().then(() => {
+                  susresBtn.textContent = 'Resume'
+                  cancelAnimationFrame(id)
+                })
+              } else if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                  susresBtn.textContent = 'Pause'
+                  draw()
+                })
+              }
+            }
             song.start()
-            // }
             song.onended = event => {
               cancelAnimationFrame(id)
-              console.log('finished')
+              vscode.postMessage('finished')
             }
             analyser.getByteFrequencyData(dataArray)
             draw()
           })
           .catch(err => {
-            console.log('Rendering failed: ' + err)
+            vscode.postMessage('error')
           })
       })
     }
@@ -81,7 +91,6 @@
       canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : (x = 0)
     }
-
     return audioCtx
   }
 })()

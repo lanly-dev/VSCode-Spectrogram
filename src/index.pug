@@ -1,6 +1,6 @@
 html
   head
-    title Spec
+    title Spectrogam
     meta(charset='UTF-8')
     meta(http-equiv='Content-Security-Policy',
       content=`default-src 'none';\
@@ -17,4 +17,5 @@ html
     link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${ctmcss_uri}`)
   body.vsc_bg.overflow
     canvas#canvas
+    div: button#susresbtn.ui.inverted.button Pause
     script(nonce=`${nonce}`, src=`${bundle_uri}`)
