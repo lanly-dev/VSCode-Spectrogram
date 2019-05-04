@@ -14,11 +14,18 @@ function activate(context) {
 
   specTV.specExplorer.onDidChangeSelection(file => {
     const fullFilePath = file.selection[0].fullFilePath
-    console.log(fullFilePath)
     if (fullFilePath.indexOf('.mp3') != -1) {
       const song_path = vscode.Uri.file(fullFilePath).with({ scheme: 'vscode-resource' })
       wv.SpecWebviewPanel.createOrShow(context.extensionPath)
       wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
+      wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
+        message => {
+          if(message == 'ready')
+            wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
+        },
+        undefined,
+        context.subscriptions
+      )
     }
   })
 }
