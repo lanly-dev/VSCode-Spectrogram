@@ -24,7 +24,7 @@ class SpecWebviewPanel {
       return
     }
 
-    const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spec', column || vscode.ViewColumn.One, {
+    const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogam', column || vscode.ViewColumn.One, {
       enableScripts: true,
     //   localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
     })

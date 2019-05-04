@@ -8,8 +8,6 @@ const path = require('path')
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  vscode.window.showInformationMessage('Hello World!')
-
   const specTV = new tv.Treeview(context)
 
   specTV.specExplorer.onDidChangeSelection(file => {
@@ -20,8 +18,9 @@ function activate(context) {
       wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
       wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
         message => {
-          if(message == 'ready')
-            wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
+          if (message == 'ready') wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
+          else if (message == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
+          else if (message == 'error') vscode.window.showErrorMessage('Something happened! 😵')
         },
         undefined,
         context.subscriptions
