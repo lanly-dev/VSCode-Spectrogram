@@ -1,14 +1,20 @@
 {
-  "name": "spec",
-  "displayName": "Spectrogam",
-  "description": "description",
-  "version": "0.0.1",
+  "name": "spectrogram",
+  "displayName": "Spectrogram",
+  "description": "Realtime Spectrogram",
+  "version": "1.0.0",
+  "publisher": "lanly-dev",
   "engines": {
     "vscode": "^1.30.0"
   },
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "Audio",
+    "Spectrogram"
+  ],
+  "icon": "icon/spec.png",
   "activationEvents": [
     "*"
   ],
@@ -33,12 +39,17 @@
     "eslint": "^4.11.0",
     "typescript": "^3.4.5",
     "vscode": "^1.1.33",
-    "webpack-cli": "^3.3.1"
+    "webpack-cli": "^3.3.2"
   },
   "dependencies": {
+    "acorn": "^6.1.1",
     "jquery": "^3.4.1",
     "pug": "^2.0.3",
     "semantic-ui-css": "^2.4.1",
     "webpack": "^4.30.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lanly-dev/VSCode-Spectrogram"
   }
 }
