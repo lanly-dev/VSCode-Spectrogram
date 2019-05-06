@@ -3,10 +3,11 @@
 **/jsconfig.json
 .git
 .gitignore
-.vscode-test/**
-.vscode/**
+.vscode-test/
+.vscode/
 *.mp3
 *.ogg
+icon/res/
 package-lock
-test/**
+test/
 vsc-extension-quickstart.md
