@@ -16,5 +16,5 @@ Limited to mp3
 Initial release of Spectrogram
 
 ### References
-https://github.com/mdn/webaudio-examples/blob/master/audiocontext-states/index.html<br>
+https://github.com/mdn/webaudio-examples/blob/master/audiocontext-states/index.html  
 https://wbrickner.wordpress.com/2016/09/27/awesome-js-html-spectrogram/
