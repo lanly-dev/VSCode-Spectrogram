@@ -17,10 +17,10 @@ function activate(context) {
       wv.SpecWebviewPanel.createOrShow(context.extensionPath)
       wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
       wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
-        message => {
-          if (message == 'ready') wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
-          else if (message == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
-          else if (message == 'error') vscode.window.showErrorMessage('Something happened! 😵')
+        response => {
+          if (response.type == 'ready') wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
+          else if (response.type == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
+          else if (response.type == 'error') vscode.window.showErrorMessage(`${response.message} 😵`)
         },
         undefined,
         context.subscriptions
