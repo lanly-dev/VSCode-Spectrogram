@@ -2,6 +2,7 @@
 const path = require('path')
 const pug = require('pug')
 const vscode = require('vscode')
+const os = require('os')
 
 class SpecWebviewPanel {
   constructor(panel, extensionPath) {
@@ -24,10 +25,11 @@ class SpecWebviewPanel {
       return
     }
 
-    const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogam', column || vscode.ViewColumn.One, {
-      enableScripts: true,
-      localResourceRoots: [vscode.Uri.file(vscode.workspace.workspaceFolders[0].uri.fsPath)]
-    })
+    const panelSetting = { enableScripts: true }
+
+    if (os.platform() == 'darwin') panelSetting.localResourceRoots = [vscode.Uri.file(vscode.workspace.workspaceFolders[0].uri.fsPath)]
+
+    const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogam', column || vscode.ViewColumn.One, panelSetting)
     SpecWebviewPanel.currentPanel = new SpecWebviewPanel(panel, extensionPath)
   }
 

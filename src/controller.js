@@ -74,9 +74,9 @@
               analyser.getByteFrequencyData(dataArray)
               draw()
             })
-            .catch(err => vscode.postMessage({ type: 'error', message: `Rendering failed: ${err}` }))
+            .catch(err => vscode.postMessage({ type: 'error', message: `Rendering failed -> ${err}` }))
         },
-        err => vscode.postMessage({ type: 'error', message: `Error with decoding audio data: ${err}` })
+        err => vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` })
       )
     }
     request.send()
