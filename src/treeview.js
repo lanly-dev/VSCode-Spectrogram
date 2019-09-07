@@ -5,7 +5,7 @@ const fs = require('fs')
 
 class Treeview {
   constructor(context) {
-    const specTreeDataProvider = new SpecTreeDataProvider(vscode.workspace.rootPath)
+    const specTreeDataProvider = new SpecTreeDataProvider(vscode.workspace.workspaceFolders[0].uri.fsPath)
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', specTreeDataProvider))
     this.specExplorer = vscode.window.createTreeView('spec-explorer', { treeDataProvider: specTreeDataProvider, showCollapseAll: true })
   }
@@ -45,10 +45,10 @@ class SpecTreeDataProvider {
   }
 
   getFiles(thePath) {
-    const toFileItem = (name, path, type) => {
+    const toFileItem = (name, targetPath, type) => {
       if (type == 'directory') {
         let descriptionText, collapsibleState
-        const filesCount = fs.readdirSync(`${path}\\${name}`).filter(this.isMp3).length
+        const filesCount = fs.readdirSync(path.join(targetPath, name)).filter(this.isMp3).length
         if (filesCount > 0) {
           collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
           descriptionText = `${filesCount} song`
@@ -57,9 +57,9 @@ class SpecTreeDataProvider {
           collapsibleState = vscode.TreeItemCollapsibleState.None
           descriptionText = 'Empty'
         }
-        return new fileItem(name, path, collapsibleState, descriptionText)
+        return new fileItem(name, targetPath, collapsibleState, descriptionText)
       } else {
-        return new fileItem(name, path, vscode.TreeItemCollapsibleState.None)
+        return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None)
       }
     }
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
@@ -84,13 +84,13 @@ class fileItem extends vscode.TreeItem {
     this.label = label
     this.collapsibleState = collapsibleState
     this.filePath = filePath
-    this.fullFilePath = `${this.filePath}\\${this.label}`
+    this.fullFilePath = path.join(this.filePath, this.label)
     this.command = command
     this.contextValue = 'dependency'
     this.descriptionText = descriptionText
   }
   get tooltip() {
-    return `${this.filePath}\\${this.label}`
+    return path.join(this.filePath, this.label)
   }
   get description() {
     return this.descriptionText

@@ -26,7 +26,7 @@ class SpecWebviewPanel {
 
     const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogam', column || vscode.ViewColumn.One, {
       enableScripts: true,
-    //   localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
+      localResourceRoots: [vscode.Uri.file(vscode.workspace.workspaceFolders[0].uri.fsPath)]
     })
     SpecWebviewPanel.currentPanel = new SpecWebviewPanel(panel, extensionPath)
   }
@@ -55,7 +55,7 @@ class SpecWebviewPanel {
     const semjs_uri = vscode.Uri.file(semjs_path).with({ scheme: 'vscode-resource' })
     const semcss_uri = vscode.Uri.file(semcss_path).with({ scheme: 'vscode-resource' })
     const jquery_uri = vscode.Uri.file(jquery_path).with({ scheme: 'vscode-resource' })
-    const compiledFunction = pug.compileFile(`${__dirname}\\index.pug`)
+    const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
     return compiledFunction({
       bundle_uri: bundle_uri,
