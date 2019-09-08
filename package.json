@@ -2,10 +2,10 @@
   "name": "spectrogram",
   "displayName": "Spectrogram",
   "description": "Realtime Spectrogram",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "lanly-dev",
   "engines": {
-    "vscode": "^1.38.0"
+    "vscode": "^1.40.0"
   },
   "categories": [
     "Other"
@@ -51,6 +51,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lanly-dev/VSCode-Spectrogram"
+    "url": "https://github.com/lanly-dev/VSCode-Spectrogram.git"
   }
 }

@@ -2,8 +2,7 @@
 *.mp3
 *.ogg
 *.vsix
-icon/res
-media
-node_modules
+icon/res/
+node_modules/
 package-lock.json
-src/ref
+ref/
