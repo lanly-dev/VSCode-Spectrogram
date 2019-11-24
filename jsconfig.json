@@ -8,9 +8,6 @@
 		]
 	},
 	"exclude": [
-		"node_modules",
-		"src/bundle.js",
-		"src/controller.js",
-		"ref"
+		"node_modules"
 	]
 }
