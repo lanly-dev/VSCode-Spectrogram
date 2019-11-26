@@ -11,11 +11,8 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     script(nonce=`${nonce}`).
       rootPath = '#{song_path}'
-    script(nonce=`${nonce}`, src=`${jquery_uri}`)
-    script(nonce=`${nonce}`, src=`${semjs_uri}`)
-    link(nonce=`${nonce}`, rel='stylesheet', type="text/css", href=`${semcss_uri}`)
-    link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${ctmcss_uri}`)
+    link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${style_css_uri}`)
   body.vsc_bg.overflow
     canvas#canvas
-    div: button#susresbtn.ui.inverted.button Pause
+    div: button#susresbtn Pause
     script(nonce=`${nonce}`, src=`${bundle_uri}`)

@@ -48,23 +48,14 @@ class SpecWebviewPanel {
   }
 
   getHtmlForWebview(extensionPath) {
-    const jquery_path = require.resolve('jquery')
-    const semjs_path = require.resolve('semantic-ui-css')
-    const semcss_path = require.resolve('semantic-ui-css/semantic.min.css')
 
     const bundle_uri = vscode.Uri.file(path.join(extensionPath, 'src', 'bundle.js')).with({ scheme: 'vscode-resource' })
-    const ctmcss_uri = vscode.Uri.file(path.join(extensionPath, 'src', 'custom.css')).with({ scheme: 'vscode-resource' })
-    const semjs_uri = vscode.Uri.file(semjs_path).with({ scheme: 'vscode-resource' })
-    const semcss_uri = vscode.Uri.file(semcss_path).with({ scheme: 'vscode-resource' })
-    const jquery_uri = vscode.Uri.file(jquery_path).with({ scheme: 'vscode-resource' })
+    const style_css_uri = vscode.Uri.file(path.join(extensionPath, 'src', 'style.css')).with({ scheme: 'vscode-resource' })
     const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
     return compiledFunction({
       bundle_uri: bundle_uri,
-      jquery_uri: jquery_uri,
-      semjs_uri: semjs_uri,
-      semcss_uri: semcss_uri,
-      ctmcss_uri: ctmcss_uri,
+      style_css_uri: style_css_uri,
       nonce: getNonce()
     })
   }

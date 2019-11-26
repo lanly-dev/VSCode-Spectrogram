@@ -33,16 +33,14 @@
     "test": "node ./test/runTest.js"
   },
   "devDependencies": {
-    "@types/node": "^12.12.12",
+    "@types/node": "^12.12.14",
     "@types/vscode": "^1.40.0",
-    "eslint": "^6.7.0",
+    "eslint": "^6.7.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "jquery": "^3.4.1",
-    "pug": "^2.0.4",
-    "semantic-ui-css": "^2.4.1"
+    "pug": "^2.0.4"
   },
   "repository": {
     "type": "git",
