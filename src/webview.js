@@ -48,9 +48,8 @@ class SpecWebviewPanel {
   }
 
   getHtmlForWebview(extensionPath) {
-
-    const bundle_uri = vscode.Uri.file(path.join(extensionPath, 'src', 'bundle.js')).with({ scheme: 'vscode-resource' })
-    const style_css_uri = vscode.Uri.file(path.join(extensionPath, 'src', 'style.css')).with({ scheme: 'vscode-resource' })
+    const bundle_uri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(extensionPath, 'src', 'bundle.js')))
+    const style_css_uri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(extensionPath, 'src', 'style.css')))
     const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
     return compiledFunction({

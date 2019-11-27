@@ -18,8 +18,7 @@ function activate(context) {
       wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
       wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
         response => {
-          if (response.type == 'ready') wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
-          else if (response.type == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
+          if (response.type == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
           else if (response.type == 'error') vscode.window.showErrorMessage(`${response.message} 😵`)
         },
         undefined,
