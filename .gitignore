@@ -5,4 +5,5 @@
 icon/res/
 node_modules/
 package-lock.json
-ref/
+ref/*
+!ref/spec.html

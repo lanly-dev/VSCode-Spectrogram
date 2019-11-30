@@ -74,7 +74,6 @@
                 cancelAnimationFrame(id)
                 vscode.postMessage({ type: 'finished' })
               }
-              analyser.getByteFrequencyData(dataArray)
               draw()
             }).catch(err => vscode.postMessage({ type: 'error', message: `Rendering failed -> ${err}` }))
           },
