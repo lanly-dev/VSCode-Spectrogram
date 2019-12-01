@@ -2,6 +2,7 @@
 *.mp3
 *.ogg
 *.vsix
+dist/
 icon/res/
 node_modules/
 package-lock.json
