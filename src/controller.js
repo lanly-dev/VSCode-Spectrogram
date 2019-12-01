@@ -39,46 +39,35 @@
       request.responseType = 'arraybuffer'
 
       request.onload = () => {
-        audioCtx.decodeAudioData(request.response).then(
-          buffer => {
-            const offlineCtx = new OfflineAudioContext(2, buffer.length, 44100)
-            const source = offlineCtx.createBufferSource()
-            source.buffer = buffer
+        audioCtx.decodeAudioData(request.response).then(buffer => {
+          const source = audioCtx.createBufferSource()
+          source.buffer = buffer
+          source.connect(audioCtx.destination)
+          source.connect(analyser)
 
-            source.connect(offlineCtx.destination)
-            source.start()
 
-            offlineCtx.startRendering().then(renderedBuffer => {
-              const song = audioCtx.createBufferSource()
-              song.buffer = renderedBuffer
-
-              song.connect(audioCtx.destination)
-              song.connect(analyser)
-              // @ts-ignore
-              susresBtn.onclick = () => {
-                if (audioCtx.state === 'running') {
-                  audioCtx.suspend().then(() => {
-                    susresBtn.textContent = 'Resume'
-                    cancelAnimationFrame(id)
-                  })
-                } else if (audioCtx.state === 'suspended') {
-                  audioCtx.resume().then(() => {
-                    susresBtn.textContent = 'Pause'
-                    draw()
-                  })
-                }
-              }
-
-              song.start()
-              song.onended = event => {
+          // @ts-ignore
+          susresBtn.onclick = () => {
+            if (audioCtx.state === 'running') {
+              audioCtx.suspend().then(() => {
+                susresBtn.textContent = 'Resume'
                 cancelAnimationFrame(id)
-                vscode.postMessage({ type: 'finished' })
-              }
-              draw()
-            }).catch(err => vscode.postMessage({ type: 'error', message: `Rendering failed -> ${err}` }))
-          },
-          err => vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` })
-        )
+              })
+            } else if (audioCtx.state === 'suspended') {
+              audioCtx.resume().then(() => {
+                susresBtn.textContent = 'Pause'
+                draw()
+              })
+            }
+          }
+
+          source.start()
+          source.onended = event => {
+            cancelAnimationFrame(id)
+            vscode.postMessage({ type: 'finished' })
+          }
+          draw()
+        }, err => vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` }))
       }
       request.send()
 

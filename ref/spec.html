@@ -44,37 +44,28 @@
     request.onload = () => {
       console.log('start')
       audioCtx.decodeAudioData(request.response, buffer => {
-        let offlineCtx = new OfflineAudioContext(2, buffer.length, 44100)
-        let source = offlineCtx.createBufferSource()
+        let source = audioCtx.createBufferSource()
         source.buffer = buffer
 
-        source.connect(offlineCtx.destination)
+        source.connect(audioCtx.destination)
+        source.connect(analyser)
         source.start()
+        draw()
 
-        offlineCtx.startRendering().then(renderedBuffer => {
-          const song = audioCtx.createBufferSource()
-          song.buffer = renderedBuffer
-          song.connect(audioCtx.destination)
-          song.connect(analyser)
-          song.start()
-          draw()
-
-          susresBtn.onclick = () => {
-            if (audioCtx.state === 'running') {
-              audioCtx.suspend().then(() => {
-                susresBtn.textContent = 'Resume'
-                cancelAnimationFrame(id)
-              })
-            } else if (audioCtx.state === 'suspended') {
-              audioCtx.resume().then(() => {
-                susresBtn.textContent = 'Pause'
-              })
-            }
+        susresBtn.onclick = () => {
+          if (audioCtx.state === 'running') {
+            audioCtx.suspend().then(() => {
+              susresBtn.textContent = 'Resume'
+              cancelAnimationFrame(id)
+            })
+          } else if (audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => {
+              susresBtn.textContent = 'Pause'
+              draw()
+            })
           }
-        })
-      }, error => {
-        console.log('onBufferError', error)
-      })
+        }
+      }, error => console.log('onBufferError', error))
     }
     request.send()
 

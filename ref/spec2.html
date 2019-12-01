@@ -44,7 +44,6 @@
     request.send()
 
     function play() {
-      offlineCtx = new OfflineAudioContext(2, buffer.length, 44100)
       sourceNode = ctx.createBufferSource()
       sourceNode.connect(ctx.destination)
       sourceNode.connect(analyser)
