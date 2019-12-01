@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <meta charset="utf-8" />
+  <meta charset='utf-8' />
   <title>Spectrogram</title>
 </head>
 
@@ -12,6 +12,8 @@
 
   <script>
     // npx http-server -o spec.html
+    // Chrome has bug on webaudio api --> analyer doesn't work on resume
+    let id
     const canvasElement = document.getElementById('canvas')
     const canvasContext = canvasElement.getContext('2d')
     const susresBtn = document.querySelector('#susresbtn')
@@ -20,7 +22,7 @@
     canvasElement.height = 512
 
     const request = new XMLHttpRequest()
-    request.open('GET','test.mp3',true)
+    request.open('GET', 'test.mp3', true)
     request.responseType = 'arraybuffer'
     audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
@@ -32,17 +34,17 @@
     const eightBufferLength = 8 * bufferLength
     const dataArray = new Uint8Array(bufferLength)
 
-    const imageDataFrame = canvasContext.createImageData(2,canvasElement.height)
-    for (let i = 0;i < imageDataFrame.data.length * 4;i += 8) {
-      for (let j = 3;j <= 7;j++) {
+    const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
+    for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
+      for (let j = 3; j <= 7; j++) {
         imageDataFrame.data[i + j] = 255 // = 0,0,0,255|255,255,255,255
       }
     }
 
     request.onload = () => {
       console.log('start')
-      audioCtx.decodeAudioData(request.response,buffer => {
-        let offlineCtx = new OfflineAudioContext(2,buffer.length,44100)
+      audioCtx.decodeAudioData(request.response, buffer => {
+        let offlineCtx = new OfflineAudioContext(2, buffer.length, 44100)
         let source = offlineCtx.createBufferSource()
         source.buffer = buffer
 
@@ -66,13 +68,12 @@
             } else if (audioCtx.state === 'suspended') {
               audioCtx.resume().then(() => {
                 susresBtn.textContent = 'Pause'
-                draw()
               })
             }
           }
         })
-      },error => {
-        console.log(JSON.stringify(error))
+      }, error => {
+        console.log('onBufferError', error)
       })
     }
     request.send()
@@ -81,10 +82,10 @@
     function draw() {
       id = requestAnimationFrame(draw)
       analyser.getByteFrequencyData(dataArray)
-      for (let i = 0,y = eightBufferLength;i < bufferLength;i++ ,y -= 8) {
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++ , y -= 8) {
         imageDataFrame.data[y] = dataArray[i]
       }
-      canvasContext.putImageData(imageDataFrame,x,0)
+      canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : x = 0
     }
   </script>

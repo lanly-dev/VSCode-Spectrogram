@@ -6,4 +6,4 @@ icon/res/
 node_modules/
 package-lock.json
 ref/*
-!ref/spec.html
+!ref/spec*.html

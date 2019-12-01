@@ -1,0 +1,101 @@
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>Spectrogram 2</title>
+</head>
+
+<body>
+
+  <canvas id='canvas'></canvas>
+  <button id='toggle'>play/pause</button>
+
+  <script>
+    // npx http-server -o spec2.html
+    // https://stackoverflow.com/questions/11506180/web-audio-api-resume-from-pause
+    // Keep track the playtime --> work on Chrome
+    const canvasElement = document.getElementById('canvas')
+    const canvasContext = canvasElement.getContext('2d')
+
+    const WIDTH = canvasElement.width = window.innerWidth
+    canvasElement.height = 512
+    let buffer, sourceNode, startedAt, pausedAt, paused, id
+
+    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+    const analyser = ctx.createAnalyser()
+    analyser.smoothingTimeConstant = 0.0
+    analyser.fftSize = 1024
+
+    const bufferLength = analyser.frequencyBinCount
+    const eightBufferLength = 8 * bufferLength
+    const dataArray = new Uint8Array(bufferLength)
+
+    const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
+    for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
+      for (let j = 3; j <= 7; j++) {
+        imageDataFrame.data[i + j] = 255 // = 0,0,0,255|255,255,255,255
+      }
+    }
+
+    const request = new XMLHttpRequest()
+    request.open('GET', 'test.mp3', true)
+    request.responseType = 'arraybuffer'
+    request.onload = () => ctx.decodeAudioData(request.response, onBufferLoad, onBufferError)
+    request.send()
+
+    function play() {
+      offlineCtx = new OfflineAudioContext(2, buffer.length, 44100)
+      sourceNode = ctx.createBufferSource()
+      sourceNode.connect(ctx.destination)
+      sourceNode.connect(analyser)
+      sourceNode.buffer = buffer
+      paused = false
+
+      if (pausedAt) {
+        startedAt = Date.now() - pausedAt
+        sourceNode.start(0, pausedAt / 1000)
+      }
+      else {
+        startedAt = Date.now()
+        sourceNode.start(0)
+      }
+      draw()
+    }
+
+    function stop() {
+      sourceNode.stop(0)
+      pausedAt = Date.now() - startedAt
+      paused = true
+      cancelAnimationFrame(id)
+    }
+
+    function onBufferLoad(b) {
+      buffer = b
+      play()
+      draw()
+    }
+
+    function onBufferError(e) {
+      console.log('onBufferError', e)
+    }
+
+    let x = 0
+    function draw() {
+      id = requestAnimationFrame(draw)
+      analyser.getByteFrequencyData(dataArray)
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++ , y -= 8) {
+        imageDataFrame.data[y] = dataArray[i]
+      }
+      canvasContext.putImageData(imageDataFrame, x, 0)
+      x < WIDTH ? x++ : x = 0
+    }
+
+    document.getElementById('toggle').onclick = () => {
+      if (paused) play()
+      else stop()
+    }
+
+  </script>
+</body>
+
+</html>
