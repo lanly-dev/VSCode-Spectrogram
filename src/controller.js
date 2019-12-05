@@ -19,7 +19,7 @@
 
     function player(path) {
       let paused = false
-      let source, startedAt, pausedAt, currentBuffer
+      let source, startedAt, pausedAt, currentBuffer, begining
       const audioCtx = new AudioContext()
       const analyser = audioCtx.createAnalyser()
       analyser.smoothingTimeConstant = 0.0
@@ -50,23 +50,26 @@
         source.buffer = currentBuffer
         source.connect(audioCtx.destination)
         source.connect(analyser)
-        // console.log(source.buffer)
 
         susresBtn.textContent = 'Pause'
         paused = false
-        draw()
         if (pausedAt) {
           startedAt = Date.now() - pausedAt
           source.start(0, (pausedAt / 1000))
         } else {
+          begining = Date.now()
           startedAt = Date.now()
           source.start(0)
         }
+        draw()
 
-        // source.onended = event => {
-        //   cancelAnimationFrame(id)
-        //   vscode.postMessage({ type: 'finished' })
-        // }
+        source.onended = event => {
+          const timePassed = (Date.now() - begining) / 1000
+          if (timePassed >= source.buffer.duration) {
+            cancelAnimationFrame(id)
+            vscode.postMessage({ type: 'finished' })
+          }
+        }
       }
 
       function stop() {
