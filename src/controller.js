@@ -9,7 +9,7 @@
     const WIDTH = canvasElement.width = window.innerWidth
     // @ts-ignore
     canvasElement.height = 512
-    const susresBtn = document.querySelector('#susresbtn')
+    const susresBtn = document.getElementById('susresbtn')
 
     let playing, id
     window.addEventListener('message', event => {
@@ -18,6 +18,8 @@
     })
 
     function player(path) {
+      let paused = false
+      let source, startedAt, pausedAt, currentBuffer
       const audioCtx = new AudioContext()
       const analyser = audioCtx.createAnalyser()
       analyser.smoothingTimeConstant = 0.0
@@ -37,39 +39,47 @@
       const request = new XMLHttpRequest()
       request.open('GET', path, true)
       request.responseType = 'arraybuffer'
-
-      request.onload = () => {
-        audioCtx.decodeAudioData(request.response).then(buffer => {
-          const source = audioCtx.createBufferSource()
-          source.buffer = buffer
-          source.connect(audioCtx.destination)
-          source.connect(analyser)
-
-
-          // @ts-ignore
-          susresBtn.onclick = () => {
-            if (audioCtx.state === 'running') {
-              audioCtx.suspend().then(() => {
-                susresBtn.textContent = 'Resume'
-                cancelAnimationFrame(id)
-              })
-            } else if (audioCtx.state === 'suspended') {
-              audioCtx.resume().then(() => {
-                susresBtn.textContent = 'Pause'
-                draw()
-              })
-            }
-          }
-
-          source.start()
-          source.onended = event => {
-            cancelAnimationFrame(id)
-            vscode.postMessage({ type: 'finished' })
-          }
-          draw()
-        }, err => vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` }))
-      }
+      request.onload = () => audioCtx.decodeAudioData(request.response, play, onBufferError)
       request.send()
+
+      susresBtn.onclick = () => paused ? play() : stop()
+
+      function play(buffer) {
+        source = audioCtx.createBufferSource()
+        if (buffer) currentBuffer = buffer
+        source.buffer = currentBuffer
+        source.connect(audioCtx.destination)
+        source.connect(analyser)
+        // console.log(source.buffer)
+
+        susresBtn.textContent = 'Pause'
+        paused = false
+        draw()
+        if (pausedAt) {
+          startedAt = Date.now() - pausedAt
+          source.start(0, (pausedAt / 1000))
+        } else {
+          startedAt = Date.now()
+          source.start(0)
+        }
+
+        // source.onended = event => {
+        //   cancelAnimationFrame(id)
+        //   vscode.postMessage({ type: 'finished' })
+        // }
+      }
+
+      function stop() {
+        pausedAt = Date.now() - startedAt
+        paused = true
+        susresBtn.textContent = 'Resume'
+        cancelAnimationFrame(id)
+        source.stop()
+      }
+
+      function onBufferError(err) {
+        vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` })
+      }
 
       let x = 0
       function draw() {
@@ -81,6 +91,7 @@
         canvasContext.putImageData(imageDataFrame, x, 0)
         x < WIDTH ? x++ : x = 0
       }
+
       return audioCtx
     }
   })()
