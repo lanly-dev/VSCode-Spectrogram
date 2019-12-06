@@ -10,10 +10,11 @@
     // @ts-ignore
     canvasElement.height = 512
     const susresBtn = document.getElementById('susresbtn')
+    const durationText = document.getElementById('duration')
 
-    let playing, id
+    let playing, id, durationId
     window.addEventListener('message', event => {
-      if (playing) playing.close().then(cancelAnimationFrame(id))
+      if (playing) playing.close().then(cancelAnimationFrame(id), clearTimeout(durationId))
       playing = player(event.data)
     })
 
@@ -61,9 +62,11 @@
           startedAt = Date.now()
           source.start(0)
         }
+        durationWatch()
         draw()
 
         source.onended = event => {
+          clearTimeout(durationId)
           const timePassed = (Date.now() - begining) / 1000
           if (timePassed >= source.buffer.duration) {
             cancelAnimationFrame(id)
@@ -82,6 +85,16 @@
 
       function onBufferError(err) {
         vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` })
+      }
+
+      function durationWatch() {
+        if (!paused) {
+          const played = fmtMSS(((Date.now() - begining) / 1000).toFixed())
+          const duration = fmtMSS(currentBuffer.duration.toFixed())
+          durationText.innerHTML = `${played}|${duration}`
+          durationId = setTimeout(durationWatch, 1000)
+        }
+        function fmtMSS(s) { return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s }
       }
 
       let x = 0

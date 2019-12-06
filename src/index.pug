@@ -14,5 +14,7 @@ html
     link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${style_css_uri}`)
   body.vsc_bg.overflow
     canvas#canvas
-    div: button#susresbtn Pause
+    div
+      button#susresbtn Pause
+      span#duration
     script(nonce=`${nonce}`, src=`${bundle_uri}`)

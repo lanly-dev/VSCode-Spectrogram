@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/node": "^12.12.14",
     "@types/vscode": "^1.40.0",
-    "eslint": "^6.7.1",
+    "eslint": "^6.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
