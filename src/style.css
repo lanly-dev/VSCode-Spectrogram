@@ -1,6 +1,12 @@
-.vsc_bg {
-    background-color: #1e1e1e;
+#susresbtn {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  cursor: pointer;
+  border: none;
 }
-.overflow{
-    overflow: scroll;
+#susresbtn:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+#duration {
+  padding-left: 5px;
 }
