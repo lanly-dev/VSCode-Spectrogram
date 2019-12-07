@@ -11,6 +11,7 @@
     canvasElement.height = 512
     const susresBtn = document.getElementById('susresbtn')
     const durationText = document.getElementById('duration')
+    const fileLabel = document.getElementById('label')
 
     let playing, id, durationId
     window.addEventListener('message', event => {
@@ -18,7 +19,7 @@
       playing = player(event.data)
     })
 
-    function player(path) {
+    function player(file) {
       let paused = false
       let source, startedAt, pausedAt, currentBuffer, begining
       const audioCtx = new AudioContext()
@@ -38,10 +39,11 @@
       }
 
       const request = new XMLHttpRequest()
-      request.open('GET', path, true)
+      request.open('GET', file.path, true)
       request.responseType = 'arraybuffer'
       request.onload = () => audioCtx.decodeAudioData(request.response, play, onBufferError)
       request.send()
+      fileLabel.innerHTML = file.name
 
       susresBtn.onclick = () => paused ? play() : stop()
 
@@ -91,7 +93,7 @@
         if (!paused) {
           const played = fmtMSS(((Date.now() - begining) / 1000).toFixed())
           const duration = fmtMSS(currentBuffer.duration.toFixed())
-          durationText.innerHTML = `${played}|${duration}`
+          durationText.innerHTML = `- ${played} | ${duration}`
           durationId = setTimeout(durationWatch, 1000)
         }
         function fmtMSS(s) { return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s }

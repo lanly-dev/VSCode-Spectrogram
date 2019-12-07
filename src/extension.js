@@ -12,10 +12,11 @@ function activate(context) {
 
   specTV.specExplorer.onDidChangeSelection(file => {
     const fullFilePath = file.selection[0].fullFilePath
+    const label = file.selection[0].label.replace('.mp3', '')
     if (fullFilePath.indexOf('.mp3') != -1) {
-      const song_path = vscode.Uri.file(fullFilePath).with({ scheme: 'vscode-resource' })
+      const songPath = vscode.Uri.file(fullFilePath).with({ scheme: 'vscode-resource' })
       wv.SpecWebviewPanel.createOrShow(context.extensionPath)
-      wv.SpecWebviewPanel.currentPanel.panel.postMessage(`${song_path}`)
+      wv.SpecWebviewPanel.currentPanel.panel.postMessage({ path: `${songPath}`, name: label })
       wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
         response => {
           if (response.type == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
@@ -29,7 +30,7 @@ function activate(context) {
 }
 exports.activate = activate
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
   activate,
