@@ -15,7 +15,11 @@
 
     let playing, id, durationId
     window.addEventListener('message', event => {
-      if (playing) playing.close().then(cancelAnimationFrame(id), clearTimeout(durationId))
+      if (playing) {
+        playing.close()
+        cancelAnimationFrame(id)
+        clearTimeout(durationId)
+      }
       playing = player(event.data)
     })
 
@@ -48,6 +52,7 @@
       susresBtn.onclick = () => paused ? play() : stop()
 
       function play(buffer) {
+        if(audioCtx.state === 'closed') return
         source = audioCtx.createBufferSource()
         if (buffer) currentBuffer = buffer
         source.buffer = currentBuffer
@@ -71,6 +76,8 @@
           clearTimeout(durationId)
           const timePassed = (Date.now() - begining) / 1000
           if (timePassed >= source.buffer.duration) {
+            // @ts-ignore
+            susresBtn.disabled = true
             cancelAnimationFrame(id)
             vscode.postMessage({ type: 'finished' })
           }

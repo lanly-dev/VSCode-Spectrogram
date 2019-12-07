@@ -11,6 +11,11 @@ function activate(context) {
   const specTV = new tv.Treeview(context)
 
   specTV.specExplorer.onDidChangeSelection(file => {
+    try { file.selection[0].fullFilePath }
+    catch (error) {
+      vscode.window.showInformationMessage('Slow down 😵')
+      return
+    }
     const fullFilePath = file.selection[0].fullFilePath
     const label = file.selection[0].label.replace('.mp3', '')
     if (fullFilePath.indexOf('.mp3') != -1) {
