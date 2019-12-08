@@ -24,6 +24,7 @@
     })
 
     function player(file) {
+      susresBtn.textContent = 'Loading'
       let paused = false
       let source, startedAt, pausedAt, currentBuffer, length, played
       const audioCtx = new AudioContext()
@@ -61,6 +62,7 @@
 
         paused = false
         susresBtn.textContent = 'Pause'
+        susresBtn.classList.remove('disabled')
         if (pausedAt) {
           startedAt = Date.now() - pausedAt
           source.start(0, (pausedAt / 1000))
@@ -80,6 +82,7 @@
             // @ts-ignore
             susresBtn.disabled = true
             susresBtn.textContent = 'Done'
+            susresBtn.classList.add('disabled')
             durationText.innerHTML = `- ${fmtMSS(played)} | ${fmtMSS(length)}`
             cancelAnimationFrame(id)
             vscode.postMessage({ type: 'finished' })

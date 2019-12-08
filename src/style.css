@@ -1,12 +1,19 @@
 #susresbtn {
   background-color: var(--vscode-button-background);
+  border: none;
   color: var(--vscode-button-foreground);
   cursor: pointer;
-  border: none;
 }
 #susresbtn:hover {
   background-color: var(--vscode-button-hoverBackground);
 }
 #label {
   padding: 0 5px;
+}
+.disabled {
+  cursor: default !important;
+  opacity: 0.5;
+}
+.disabled:hover {
+  background-color: var(--vscode-button-background) !important;
 }
