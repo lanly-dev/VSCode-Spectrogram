@@ -25,7 +25,7 @@
 
     function player(file) {
       let paused = false
-      let source, startedAt, pausedAt, currentBuffer, begining
+      let source, startedAt, pausedAt, currentBuffer, length, played
       const audioCtx = new AudioContext()
       const analyser = audioCtx.createAnalyser()
       analyser.smoothingTimeConstant = 0.0
@@ -52,32 +52,35 @@
       susresBtn.onclick = () => paused ? play() : stop()
 
       function play(buffer) {
-        if(audioCtx.state === 'closed') return
+        if (audioCtx.state === 'closed') return
         source = audioCtx.createBufferSource()
         if (buffer) currentBuffer = buffer
         source.buffer = currentBuffer
         source.connect(audioCtx.destination)
         source.connect(analyser)
 
-        susresBtn.textContent = 'Pause'
         paused = false
+        susresBtn.textContent = 'Pause'
         if (pausedAt) {
           startedAt = Date.now() - pausedAt
           source.start(0, (pausedAt / 1000))
         } else {
-          begining = Date.now()
           startedAt = Date.now()
           source.start(0)
+          length = Math.trunc(source.buffer.duration)
         }
         durationWatch()
         draw()
+        // @ts-ignore
+        susresBtn.disabled = false
 
         source.onended = event => {
           clearTimeout(durationId)
-          const timePassed = (Date.now() - begining) / 1000
-          if (timePassed >= source.buffer.duration) {
+          if (played >= length) {
             // @ts-ignore
             susresBtn.disabled = true
+            susresBtn.textContent = 'Done'
+            durationText.innerHTML = `- ${fmtMSS(played)} | ${fmtMSS(length)}`
             cancelAnimationFrame(id)
             vscode.postMessage({ type: 'finished' })
           }
@@ -98,13 +101,13 @@
 
       function durationWatch() {
         if (!paused) {
-          const played = fmtMSS(((Date.now() - begining) / 1000).toFixed())
-          const duration = fmtMSS(currentBuffer.duration.toFixed())
-          durationText.innerHTML = `- ${played} | ${duration}`
+          played = Math.trunc((Date.now() - startedAt) / 1000)
+          durationText.innerHTML = `- ${fmtMSS(played)} | ${fmtMSS(length)}`
           durationId = setTimeout(durationWatch, 1000)
         }
-        function fmtMSS(s) { return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s }
       }
+
+      function fmtMSS(s) { return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s }
 
       let x = 0
       function draw() {
