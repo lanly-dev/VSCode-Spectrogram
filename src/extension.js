@@ -8,9 +8,8 @@ const path = require('path')
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  const specTV = new tv.Treeview(context)
-
-  specTV.specExplorer.onDidChangeSelection(file => {
+  const specExplorer = tv.Treeview.create(context)
+  specExplorer.onDidChangeSelection(file => {
     try { file.selection[0].fullFilePath }
     catch (error) {
       vscode.window.showInformationMessage('Slow down 😵')

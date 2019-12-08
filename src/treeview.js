@@ -4,10 +4,10 @@ const path = require('path')
 const fs = require('fs')
 
 class Treeview {
-  constructor(context) {
+  static create(context) {
     const specTreeDataProvider = new SpecTreeDataProvider(vscode.workspace.workspaceFolders[0].uri.fsPath)
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', specTreeDataProvider))
-    this.specExplorer = vscode.window.createTreeView('spec-explorer', { treeDataProvider: specTreeDataProvider, showCollapseAll: true })
+    return vscode.window.createTreeView('spec-explorer', { treeDataProvider: specTreeDataProvider, showCollapseAll: true })
   }
 }
 
@@ -41,7 +41,7 @@ class SpecTreeDataProvider {
 
   // ??
   provideTextDocumentContent(uri, token) {
-    return uri+token
+    return uri + token
   }
 
   getFiles(thePath) {
@@ -98,4 +98,3 @@ class fileItem extends vscode.TreeItem {
 }
 
 exports.Treeview = Treeview
-exports.fileItem = fileItem

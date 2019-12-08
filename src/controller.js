@@ -25,6 +25,7 @@
 
     function player(file) {
       susresBtn.textContent = 'Loading'
+      susresBtn.classList.add('disabled')
       let paused = false
       let source, startedAt, pausedAt, currentBuffer, length, played
       const audioCtx = new AudioContext()
