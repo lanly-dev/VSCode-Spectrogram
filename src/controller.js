@@ -5,8 +5,7 @@
     const canvasElement = document.getElementById('canvas')
     // @ts-ignore
     const canvasContext = canvasElement.getContext('2d')
-    // @ts-ignore
-    const WIDTH = canvasElement.width = window.innerWidth
+
     // @ts-ignore
     canvasElement.height = 512
     const susresBtn = document.getElementById('susresbtn')
@@ -24,6 +23,8 @@
     })
 
     function player(file) {
+      // @ts-ignore
+      const WIDTH = canvasElement.width = window.innerWidth
       susresBtn.textContent = 'Loading'
       susresBtn.classList.add('disabled')
       let paused = false

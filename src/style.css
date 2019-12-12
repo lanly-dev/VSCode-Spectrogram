@@ -1,3 +1,6 @@
+#canvas {
+  background-color: black;
+}
 #susresbtn {
   background-color: var(--vscode-button-background);
   border: none;

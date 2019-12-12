@@ -5,7 +5,8 @@ const fs = require('fs')
 
 class Treeview {
   static create(context) {
-    const specTreeDataProvider = new SpecTreeDataProvider(vscode.workspace.workspaceFolders[0].uri.fsPath)
+    const path = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null
+    const specTreeDataProvider = new SpecTreeDataProvider(path)
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', specTreeDataProvider))
     return vscode.window.createTreeView('spec-explorer', { treeDataProvider: specTreeDataProvider, showCollapseAll: true })
   }
@@ -32,11 +33,8 @@ class SpecTreeDataProvider {
       return Promise.resolve([])
     }
 
-    if (element) {
-      return this.getFiles(path.join(element.filePath, element.label))
-    } else {
-      return this.getFiles(this.workspaceRoot)
-    }
+    if (element) return this.getFiles(path.join(element.filePath, element.label))
+    else return this.getFiles(this.workspaceRoot)
   }
 
   // ??
@@ -58,9 +56,7 @@ class SpecTreeDataProvider {
           descriptionText = 'Empty'
         }
         return new fileItem(name, targetPath, collapsibleState, descriptionText)
-      } else {
-        return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None)
-      }
+      } else return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None)
     }
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
 
