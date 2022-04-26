@@ -43,7 +43,10 @@
 
     request.onload = () => {
       console.log('start')
+      console.log(JSON.stringify(request.response.byteLength))
+      console.log('5555555555555555555555555555')
       audioCtx.decodeAudioData(request.response, buffer => {
+        console.log('dddddddddddddddddddd')
         let source = audioCtx.createBufferSource()
         source.buffer = buffer
 

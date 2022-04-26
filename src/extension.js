@@ -18,9 +18,10 @@ function activate(context) {
     const fullFilePath = file.selection[0].fullFilePath
     const label = file.selection[0].label.replace('.mp3', '')
     if (fullFilePath.indexOf('.mp3') != -1) {
-      const songPath = vscode.Uri.file(fullFilePath).with({ scheme: 'vscode-resource' })
+      const songPath = vscode.Uri.file(fullFilePath)
       wv.SpecWebviewPanel.createOrShow(context.extensionPath)
-      wv.SpecWebviewPanel.currentPanel.panel.postMessage({ path: `${songPath}`, name: label })
+      const panel = wv.SpecWebviewPanel.currentPanel.panel.webview.asWebviewUri(songPath)
+      wv.SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
       wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
         response => {
           if (response.type == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')

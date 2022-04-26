@@ -19,7 +19,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Update CSS
 - Display duration
 - Minor bugfixes
-- Switch method suspend/resume --> start/stop []
+- Switch method suspend/resume --> start/stop
 - 3524 files, 4.33MB
 
 ## [1.0.1] - September 2019

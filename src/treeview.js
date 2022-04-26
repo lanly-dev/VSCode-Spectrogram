@@ -43,6 +43,7 @@ class SpecTreeDataProvider {
   }
 
   getFiles(thePath) {
+    // name
     const toFileItem = (name, targetPath, type) => {
       if (type == 'directory') {
         let descriptionText, collapsibleState

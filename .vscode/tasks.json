@@ -6,7 +6,7 @@
     {
       "label": "webpack",
       "type": "shell",
-      "command": "bash -c 'npx webpack --config webpack.config.js'",
+      "command": "npx webpack --config webpack.config.js",
       "group": "build",
       "presentation": {
         "reveal": "always"

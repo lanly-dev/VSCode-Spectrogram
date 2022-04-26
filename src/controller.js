@@ -19,6 +19,8 @@
         cancelAnimationFrame(id)
         clearTimeout(durationId)
       }
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$')
+      console.log(JSON.stringify(event.data))
       playing = player(event.data)
     })
 
@@ -46,15 +48,25 @@
       }
 
       const request = new XMLHttpRequest()
-      request.open('GET', file.path, true)
+      console.log(file.path)
+      request.open('GET', file.path)
       request.responseType = 'arraybuffer'
-      request.onload = () => audioCtx.decodeAudioData(request.response, play, onBufferError)
+      request.onload = (a) => {
+        console.log(a.lengthComputable)
+        console.log(a.loaded)
+        console.log(a.total)
+        console.log(request.DONE)
+        console.log(request.status)
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        console.log(JSON.stringify(request.response.byteLength))
+        audioCtx.decodeAudioData(request.response, play, onBufferError)}
       request.send()
       fileLabel.innerHTML = file.name
 
       susresBtn.onclick = () => paused ? play() : stop()
 
       function play(buffer) {
+        console.log('llllllllllllllllllllllllll')
         if (audioCtx.state === 'closed') return
         source = audioCtx.createBufferSource()
         if (buffer) currentBuffer = buffer

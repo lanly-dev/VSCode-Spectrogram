@@ -1,9 +1,9 @@
 const path = require('path')
 module.exports = {
   mode: 'production',
-  entry: "./src/controller.js",
+  entry: './src/controller.js',
   output: {
-    filename: "bundle.js",
+    filename: 'bundle.js',
     path: path.resolve(__dirname,'dist')
   }
 }

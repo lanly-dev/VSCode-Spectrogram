@@ -25,9 +25,10 @@ class SpecWebviewPanel {
       return
     }
 
-    const panelSetting = { enableScripts: true }
+    const panelSetting = { enableScripts: true, enableCommandUris: true}
 
     if (os.platform() == 'darwin') panelSetting.localResourceRoots = [vscode.Uri.file(vscode.workspace.workspaceFolders[0].uri.fsPath)]
+    console.log(vscode.workspace.workspaceFolders[0].uri.fsPath)
 
     const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogam', column || vscode.ViewColumn.One, panelSetting)
     SpecWebviewPanel.currentPanel = new SpecWebviewPanel(panel, extensionPath)
