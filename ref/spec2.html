@@ -14,6 +14,7 @@
     // npx http-server -o spec2.html
     // https://stackoverflow.com/questions/11506180/web-audio-api-resume-from-pause
     // Keep track the playtime --> work on Chrome
+
     const canvasElement = document.getElementById('canvas')
     const canvasContext = canvasElement.getContext('2d')
 
@@ -33,7 +34,7 @@
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
     for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
       for (let j = 3; j <= 7; j++) {
-        imageDataFrame.data[i + j] = 255 // = 0,0,0,255|255,255,255,255
+        imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
       }
     }
 
@@ -82,7 +83,7 @@
     function draw() {
       id = requestAnimationFrame(draw)
       analyser.getByteFrequencyData(dataArray)
-      for (let i = 0, y = eightBufferLength; i < bufferLength; i++ , y -= 8) {
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) {
         imageDataFrame.data[y] = dataArray[i]
       }
       canvasContext.putImageData(imageDataFrame, x, 0)

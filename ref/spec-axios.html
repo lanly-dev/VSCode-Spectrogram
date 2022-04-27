@@ -3,6 +3,7 @@
 <head>
   <meta charset='utf-8' />
   <title>Spectrogram</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -11,11 +12,8 @@
   <button id='susresBtn'>Resume</button>
 
   <script>
-    // npx http-server -o spec.html
+    // npx http-server -o spec-axios.html
 
-    // Chrome 100.0.4896.127 (Official Build) (64-bit) works
-    // Firefox 99.0.1 (64-bit) works
-    // Edge 100.0.1185.50 (Official build) (64-bit) didn't work -> due to interception of downloader
     let id
     const canvasElement = document.getElementById('canvas')
     const canvasContext = canvasElement.getContext('2d')
@@ -40,14 +38,11 @@
       }
     }
 
-    const request = new XMLHttpRequest()
-    request.open('GET', 'test.mp3', true)
-    request.responseType = 'arraybuffer'
+    axios.get('test.mp3', { responseType: 'arraybuffer' }).then((res) => run(res.data), (err) => console.log(err))
 
-    request.onload = (progEvent) => {
+    function run(data) {
       console.log('start')
-      console.log(progEvent)
-      audioCtx.decodeAudioData(request.response, buffer => {
+      audioCtx.decodeAudioData(data, buffer => {
         let source = audioCtx.createBufferSource()
         source.buffer = buffer
 
@@ -71,7 +66,7 @@
         }
       }, error => console.log('onBufferError', error))
     }
-    request.send()
+
 
     let x = 0
     function draw() {
