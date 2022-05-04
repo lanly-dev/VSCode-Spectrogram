@@ -3,12 +3,15 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 
-class Treeview {
+class TreeView {
   static create(context) {
     const path = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null
     const specTreeDataProvider = new SpecTreeDataProvider(path)
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', specTreeDataProvider))
-    return vscode.window.createTreeView('spec-explorer', { treeDataProvider: specTreeDataProvider, showCollapseAll: true })
+    return vscode.window.createTreeView('spec-explorer', {
+      treeDataProvider: specTreeDataProvider,
+      showCollapseAll: true
+    })
   }
 }
 
@@ -61,13 +64,13 @@ class SpecTreeDataProvider {
     }
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
 
-    const subdirs = fs.readdirSync(thePath).filter(isDirectory)
+    const subDirs = fs.readdirSync(thePath).filter(isDirectory)
     const mp3s = fs.readdirSync(thePath).filter(this.isMp3)
 
-    const subdirsItem = subdirs.map(name => toFileItem(name, thePath, 'directory'))
+    const subDirsItem = subDirs.map(name => toFileItem(name, thePath, 'directory'))
     const mp3filesItem = mp3s.map(name => toFileItem(name, thePath, 'mp3'))
 
-    return subdirsItem.concat(mp3filesItem)
+    return subDirsItem.concat(mp3filesItem)
   }
 
   isMp3(name) {
@@ -78,20 +81,16 @@ class SpecTreeDataProvider {
 class fileItem extends vscode.TreeItem {
   constructor(label, filePath, collapsibleState, descriptionText, command) {
     super(label, collapsibleState)
-    this.label = label
     this.collapsibleState = collapsibleState
-    this.filePath = filePath
-    this.fullFilePath = path.join(this.filePath, this.label)
     this.command = command
     this.contextValue = 'dependency'
-    this.descriptionText = descriptionText
-  }
-  get tooltip() {
-    return path.join(this.filePath, this.label)
-  }
-  get description() {
-    return this.descriptionText
+    this.description = descriptionText
+    this.filePath = filePath
+
+    this.label = label
+    this.fullFilePath = path.join(this.filePath, this.label)
+    this.tooltip = path.join(this.filePath, this.label)
   }
 }
 
-exports.Treeview = Treeview
+exports.TreeView = TreeView

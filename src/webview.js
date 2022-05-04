@@ -1,8 +1,8 @@
 'use strict'
+const { Uri, ViewColumn, workspace, window } = require('vscode')
+const os = require('os')
 const path = require('path')
 const pug = require('pug')
-const vscode = require('vscode')
-const os = require('os')
 
 class SpecWebviewPanel {
   constructor(panel, extensionPath) {
@@ -17,7 +17,7 @@ class SpecWebviewPanel {
   }
 
   static createOrShow(extensionPath) {
-    const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
+    const column = window.activeTextEditor ? window.activeTextEditor.viewColumn : undefined
 
     // If we already have a panel, show it.
     if (SpecWebviewPanel.currentPanel) {
@@ -25,12 +25,14 @@ class SpecWebviewPanel {
       return
     }
 
-    const panelSetting = { enableScripts: true, enableCommandUris: true}
+    const panelSetting = { enableScripts: true, enableCommandUris: true }
 
-    if (os.platform() == 'darwin') panelSetting.localResourceRoots = [vscode.Uri.file(vscode.workspace.workspaceFolders[0].uri.fsPath)]
-    console.log(vscode.workspace.workspaceFolders[0].uri.fsPath)
+    if (os.platform() == 'darwin') {
+      panelSetting.localResourceRoots = [Uri.file(workspace.workspaceFolders[0].uri.fsPath)]
+    }
 
-    const panel = vscode.window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogam', column || vscode.ViewColumn.One, panelSetting)
+    const viewColumn = column || ViewColumn.One
+    const panel = window.createWebviewPanel(SpecWebviewPanel.viewType, 'Spectrogram', viewColumn, panelSetting)
     SpecWebviewPanel.currentPanel = new SpecWebviewPanel(panel, extensionPath)
   }
 
@@ -49,15 +51,11 @@ class SpecWebviewPanel {
   }
 
   getHtmlForWebview(extensionPath) {
-    const bundle_uri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(extensionPath, 'dist', 'bundle.js')))
-    const style_css_uri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(extensionPath, 'src', 'style.css')))
+    const bundle_uri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionPath, 'dist', 'bundle.js')))
+    const style_css_uri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionPath, 'src', 'style.css')))
     const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
-    return compiledFunction({
-      bundle_uri: bundle_uri,
-      style_css_uri: style_css_uri,
-      nonce: getNonce()
-    })
+    return compiledFunction({ bundle_uri, style_css_uri, nonce: getNonce() })
   }
 }
 

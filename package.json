@@ -1,7 +1,7 @@
 {
   "name": "spectrogram",
   "displayName": "Spectrogram",
-  "description": "Realtime Spectrogram",
+  "description": "Real-time spectrogram",
   "version": "1.1.0",
   "publisher": "lanly-dev",
   "engines": {
@@ -30,15 +30,16 @@
     }
   },
   "scripts": {},
-  "devDependencies": {
-    "@types/node": "^14.11.8",
-    "@types/vscode": "^1.50.0",
-    "eslint": "^7.11.0",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12"
-  },
   "dependencies": {
-    "pug": "^3.0.0"
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.31",
+    "@types/vscode": "^1.66.0",
+    "@types/vscode-webview": "^1.57.0",
+    "eslint": "^8.14.0",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
   },
   "repository": {
     "type": "git",

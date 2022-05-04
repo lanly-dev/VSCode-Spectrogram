@@ -1,6 +1,6 @@
 html
   head
-    title Spectrogam
+    title Spectrogram
     meta(charset='UTF-8')
     meta(http-equiv='Content-Security-Policy',
       content=`default-src 'none';\
@@ -15,7 +15,7 @@ html
   body
     canvas#canvas
     div
-      button#susresbtn.disabled(disabled) Loading
+      button#susresBtn.disabled(disabled) Loading
       span#label
       span#duration
     script(nonce=`${nonce}`, src=`${bundle_uri}`)
