@@ -51,9 +51,8 @@ class SpecWebviewPanel {
   }
 
   getHtmlForWebview(extensionPath) {
-    const { asWebviewUri } = this.panel.webview
-    const bundleUri = asWebviewUri(Uri.file(path.join(extensionPath, 'dist', 'bundle.js')))
-    const styleCssUri = asWebviewUri(Uri.file(path.join(extensionPath, 'src', 'style.css')))
+    const bundleUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionPath, 'dist', 'bundle.js')))
+    const styleCssUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionPath, 'src', 'style.css')))
     const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
     return compiledFunction({ bundleUri, styleCssUri, nonce: getNonce() })

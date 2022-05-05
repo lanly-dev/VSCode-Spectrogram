@@ -50,7 +50,7 @@ class SpecTreeDataProvider {
     const toFileItem = (name, targetPath, type) => {
       if (type == 'directory') {
         let descriptionText, collapsibleState
-        const filesCount = fs.readdirSync(path.join(targetPath, name)).filter(this.isMp3).length
+        const filesCount = fs.readdirSync(path.join(targetPath, name)).filter(this.isSupportedMedia).length
         if (filesCount > 0) {
           collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
           descriptionText = `${filesCount} song`
@@ -65,16 +65,17 @@ class SpecTreeDataProvider {
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
 
     const subDirs = fs.readdirSync(thePath).filter(isDirectory)
-    const mp3s = fs.readdirSync(thePath).filter(this.isMp3)
+    const mp3s = fs.readdirSync(thePath).filter(this.isSupportedMedia)
 
     const subDirsItem = subDirs.map(name => toFileItem(name, thePath, 'directory'))
-    const mp3filesItem = mp3s.map(name => toFileItem(name, thePath, 'mp3'))
+    const mp3filesItem = mp3s.map(name => toFileItem(name, thePath, 'audio'))
 
     return subDirsItem.concat(mp3filesItem)
   }
 
-  isMp3(name) {
-    return name.indexOf('.mp3') != -1 ? true : false
+  isSupportedMedia(name) {
+    if (name.indexOf('.mp3') != -1) return true
+    if (name.indexOf('.flac') != -1) return true
   }
 }
 

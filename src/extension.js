@@ -1,4 +1,5 @@
 'use strict'
+const path = require('path')
 const { ExtensionContext, Uri, window } = require('vscode')
 const { TreeView } = require('./treeView')
 const { SpecWebviewPanel } = require('./webview')
@@ -16,15 +17,15 @@ function activate(context) {
       return
     }
     const { fullFilePath } = file.selection[0]
-    if (fullFilePath.indexOf('.mp3') === -1) return
+    const format = fullFilePath.split('.').pop()
+    if (!['flac', 'mp3'].includes(format)) return
 
-    const label = file.selection[0].label.replace('.mp3', '')
+    const label = path.parse(file.selection[0].label).name
     const songPath = Uri.file(fullFilePath)
     SpecWebviewPanel.createOrShow(context.extensionPath)
-    const { asWebviewUri, postMessage, onDidReceiveMessage } = SpecWebviewPanel.currentPanel.panel.webview
-    const panel = asWebviewUri(songPath)
-    postMessage({ path: `${panel}`, name: label })
-    onDidReceiveMessage(
+    const panel = SpecWebviewPanel.currentPanel.panel.webview.asWebviewUri(songPath)
+    SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
+    SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
       ({ type, message }) => {
         if (type == 'finished') window.showInformationMessage('Finished Playing 😎')
         else if (type == 'error') window.showErrorMessage(`${message} 😵`)

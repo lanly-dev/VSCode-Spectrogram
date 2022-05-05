@@ -1,9 +1,10 @@
 {
   "cSpell.words": [
+    "flac",
     "lanly",
     "susres",
     "webaudio"
   ],
   "editor.rulers": [120],
-  "explorer.sortOrder": "type",
+  "explorer.sortOrder": "type"
 }
