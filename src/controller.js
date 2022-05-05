@@ -37,7 +37,7 @@
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
     for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
       for (let j = 3; j <= 7; j++) {
-        imageDataFrame.data[i + j] = 255 // = 0,0,0,255|255,255,255,255
+        imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
       }
     }
 
@@ -122,7 +122,6 @@
       canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : (x = 0)
     }
-
     return audioCtx
   }
 })()

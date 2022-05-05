@@ -3,5 +3,7 @@
     "lanly",
     "susres",
     "webaudio"
-  ]
+  ],
+  "editor.rulers": [120],
+  "explorer.sortOrder": "type",
 }

@@ -1,10 +1,10 @@
 'use strict'
-const vscode = require('vscode')
+const { ExtensionContext, Uri, window } = require('vscode')
 const { TreeView } = require('./treeView')
-const wv = require('./webview')
+const { SpecWebviewPanel } = require('./webview')
 
 /**
- * @param {vscode.ExtensionContext} context
+ * @param {ExtensionContext} context
  */
 function activate(context) {
   const specExplorer = TreeView.create(context)
@@ -12,21 +12,22 @@ function activate(context) {
     try {
       file.selection[0].fullFilePath
     } catch (error) {
-      vscode.window.showInformationMessage('Slow down 😵')
+      window.showInformationMessage('Slow down 😵')
       return
     }
     const { fullFilePath } = file.selection[0]
     if (fullFilePath.indexOf('.mp3') === -1) return
 
     const label = file.selection[0].label.replace('.mp3', '')
-    const songPath = vscode.Uri.file(fullFilePath)
-    wv.SpecWebviewPanel.createOrShow(context.extensionPath)
-    const panel = wv.SpecWebviewPanel.currentPanel.panel.webview.asWebviewUri(songPath)
-    wv.SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
-    wv.SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
-      response => {
-        if (response.type == 'finished') vscode.window.showInformationMessage('Finished Playing 😎')
-        else if (response.type == 'error') vscode.window.showErrorMessage(`${response.message} 😵`)
+    const songPath = Uri.file(fullFilePath)
+    SpecWebviewPanel.createOrShow(context.extensionPath)
+    const { asWebviewUri, postMessage, onDidReceiveMessage } = SpecWebviewPanel.currentPanel.panel.webview
+    const panel = asWebviewUri(songPath)
+    postMessage({ path: `${panel}`, name: label })
+    onDidReceiveMessage(
+      ({ type, message }) => {
+        if (type == 'finished') window.showInformationMessage('Finished Playing 😎')
+        else if (type == 'error') window.showErrorMessage(`${message} 😵`)
       },
       undefined,
       context.subscriptions
@@ -36,7 +37,4 @@ function activate(context) {
 
 function deactivate() {}
 
-module.exports = {
-  activate,
-  deactivate
-}
+module.exports = { activate, deactivate }

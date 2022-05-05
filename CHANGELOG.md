@@ -9,8 +9,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Playback time slider
 - More colors
 - Support more audio formats
-- [Display duration on treeview](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
-- Minimize package size --> [blocked that cause by Pugjs](https://github.com/pugjs/pug/issues/2889#issuecomment-456477196) due to its Uglify.js dependency.
+- [Display duration in explorer](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
+- Minimize package size --> [blocked that cause by Pug](https://github.com/pugjs/pug/issues/2889#issuecomment-456477196) due to its Uglify.js dependency.
 - Switch back [suspend/resume](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/AudioContext) instead using start/stop --> blocked that cause by Chrome? since Firefox works fine
 - Realtime input mode
 
@@ -24,7 +24,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.0.1] - September 2019
 - Fixed path issue for other OS platforms
-- Set VS Code version requirement to 1.40 - Wait for VS Code to update to newer Chrome version 
+- Set VS Code version requirement to 1.40 - Wait for VS Code to update to newer Chrome version
 - 6723 files, 10.2MB
 
 ## [1.0.0] - May 2019

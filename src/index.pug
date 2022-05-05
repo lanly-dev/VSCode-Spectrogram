@@ -9,13 +9,11 @@ html
       font-src vscode-resource: data: https:;\
       connect-src vscode-resource: 'nonce-${nonce}';`)
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    script(nonce=`${nonce}`).
-      rootPath = '#{song_path}'
-    link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${style_css_uri}`)
+    link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${styleCssUri}`)
   body
     canvas#canvas
     div
       button#susresBtn.disabled(disabled) Loading
       span#label
       span#duration
-    script(nonce=`${nonce}`, src=`${bundle_uri}`)
+    script(nonce=`${nonce}`, src=`${bundleUri}`)
