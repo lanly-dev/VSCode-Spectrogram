@@ -1,4 +1,8 @@
 'use strict'
+
+const PLAY_ICON = '<i class="codicon codicon-play"></i>'
+const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
+
 ;(() => {
   const vscode = acquireVsCodeApi()
   const canvasElement = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
@@ -6,6 +10,8 @@
 
   canvasElement.height = 512
   const susresBtn = /** @type {HTMLButtonElement} */ (document.getElementById('susresBtn'))
+  const backBtn = /** @type {HTMLButtonElement} */ (document.getElementById('backBtn'))
+  const forwardBtn = /** @type {HTMLButtonElement} */ (document.getElementById('forwardBtn'))
   const durationText = document.getElementById('duration')
   const fileLabel = document.getElementById('label')
 
@@ -26,9 +32,7 @@
    */
   function player(file) {
     const WIDTH = (canvasElement.width = window.innerWidth)
-    susresBtn.textContent = 'Loading'
-    susresBtn.classList.add('disabled')
-
+    togglePlayback('loading')
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
     analyser.smoothingTimeConstant = 0.0
@@ -52,14 +56,13 @@
     request.send()
 
     fileLabel.innerHTML = file.name
-    const source = audioCtx.createBufferSource()
+    let source = audioCtx.createBufferSource()
+    let buffer
 
     // Test this
     source.onended = event => {
       clearTimeout(durationId)
-      susresBtn.disabled = true
-      susresBtn.textContent = 'Done'
-      susresBtn.classList.add('disabled')
+      togglePlayback('done')
       cancelAnimationFrame(id)
       vscode.postMessage({ type: 'finished' })
     }
@@ -67,36 +70,78 @@
     susresBtn.onclick = () => {
       if (audioCtx.state === 'running') {
         audioCtx.suspend().then(() => {
-          susresBtn.textContent = 'Resume'
+          susresBtn.innerHTML = PLAY_ICON
           cancelAnimationFrame(id)
         })
       } else {
         //suspended
         audioCtx.resume().then(() => {
-          susresBtn.textContent = 'Pause'
+          susresBtn.innerHTML = PAUSE_ICON
           draw()
           durationWatch()
         })
       }
     }
 
-    function start(buffer) {
+    backBtn.onclick = () => {
+      console.log('hello')
+      const { contextTime } = audioCtx.getOutputTimestamp()
+      source = audioCtx.createBufferSource()
+      source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+      source.start()
+      source.start(contextTime - 5)
+    }
+
+    forwardBtn.onclick = () => {
+      console.log('hell123o')
+      const { contextTime } = audioCtx.getOutputTimestamp()
+      source = audioCtx.createBufferSource()
+      source.start(contextTime + 5)
+    }
+
+    function start(theBuffer) {
       // This prevents clicking too fast - closed before starting
       if (audioCtx.state === 'closed') return
-      source.buffer = buffer
+      buffer = theBuffer
+      source.buffer = theBuffer
       source.connect(audioCtx.destination)
       source.connect(analyser)
       source.start()
       draw()
       durationWatch()
 
-      susresBtn.textContent = 'Pause'
-      susresBtn.disabled = false
-      susresBtn.classList.remove('disabled')
+      togglePlayback('playing')
     }
 
     function onBufferError(err) {
       vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` })
+    }
+
+    function togglePlayback(state) {
+      switch (state) {
+        case 'loading':
+          susresBtn.textContent = 'Loading'
+          susresBtn.classList.add('disabled')
+          susresBtn.disabled = true
+          backBtn.style.display = 'none'
+          forwardBtn.style.display = 'none'
+          break
+        case 'playing':
+          susresBtn.innerHTML = PAUSE_ICON
+          susresBtn.classList.remove('disabled')
+          susresBtn.disabled = false
+          backBtn.style.display = 'inline-block'
+          forwardBtn.style.display = 'inline-block'
+          break
+        case 'done':
+          susresBtn.textContent = 'Done'
+          susresBtn.disabled = true
+          backBtn.style.display = 'none'
+          forwardBtn.style.display = 'none'
+          break
+      }
     }
 
     function durationWatch() {

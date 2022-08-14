@@ -11,7 +11,9 @@ class SpecWebviewPanel {
     this.extensionPath = extensionPath
 
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables)
+    // eslint-disable-next-line no-unused-vars
     this.panel.onDidChangeViewState(event => {}, null, this.disposables)
+    // eslint-disable-next-line no-unused-vars
     this.panel.webview.onDidReceiveMessage(message => {}, null, this.disposables)
     this.panel.webview.html = this.getHtmlForWebview(extensionPath)
   }
@@ -50,12 +52,13 @@ class SpecWebviewPanel {
     }
   }
 
-  getHtmlForWebview(extensionPath) {
-    const bundleUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionPath, 'dist', 'bundle.js')))
-    const styleCssUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionPath, 'src', 'style.css')))
+  getHtmlForWebview(extensionUri) {
+    const bundleUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'bundle.js')))
+    const styleCssUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionUri, 'src', 'style.css')))
+    const codiconsUri =  this.panel.webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'codicon.css')))
     const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
-    return compiledFunction({ bundleUri, styleCssUri, nonce: getNonce() })
+    return compiledFunction({ bundleUri, codiconsUri, styleCssUri, nonce: getNonce() })
   }
 }
 
@@ -65,9 +68,7 @@ SpecWebviewPanel.viewType = 'spec'
 function getNonce() {
   let text = ''
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length))
-  }
+  for (let i = 0; i < 32; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))
   return text
 }
 

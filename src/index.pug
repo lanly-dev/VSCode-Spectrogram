@@ -10,10 +10,18 @@ html
       connect-src vscode-resource: 'nonce-${nonce}';`)
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${styleCssUri}`)
+    link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${codiconsUri}`)
+
   body
     canvas#canvas
     div
-      button#susresBtn.disabled(disabled) Loading
+      button#backBtn.d-none
+        i.codicon.codicon-play.me-n5
+        i.codicon.codicon-play
+      button#susresBtn.disabled(disabled)
+      button#forwardBtn.d-none
+        i.codicon.codicon-play.me-n5
+        i.codicon.codicon-play
       span#label
       span#duration
     script(nonce=`${nonce}`, src=`${bundleUri}`)

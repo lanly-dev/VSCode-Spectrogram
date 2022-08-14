@@ -1,3 +1,7 @@
+#backBtn > .codicon {
+  transform: scaleX(-1);
+}
+
 #canvas {
   background-color: black;
 }
@@ -6,15 +10,24 @@
   padding: 0 5px;
 }
 
-#susresBtn {
+button {
   background-color: var(--vscode-button-background);
   border: none;
   color: var(--vscode-button-foreground);
   cursor: pointer;
+  padding: .3em;
 }
 
-#susresBtn:hover {
+button:hover {
   background-color: var(--vscode-button-hoverBackground);
+}
+
+.codicon {
+  vertical-align: middle;
+}
+
+.d-none {
+  display: none;
 }
 
 .disabled {
@@ -24,4 +37,8 @@
 
 .disabled:hover {
   background-color: var(--vscode-button-background) !important;
+}
+
+.me-n5 {
+  margin-right: -5px;
 }
