@@ -9,22 +9,26 @@
   const durationText = document.getElementById('duration')
   const fileLabel = document.getElementById('label')
 
-  let playing, id, durationId
+  let currPlayer, id, durationId
+  // Receive data from vscode
   window.addEventListener('message', event => {
-    if (playing) {
-      playing.close()
+    if (currPlayer) {
+      currPlayer.close()
+      durationText.innerHTML = ''
       cancelAnimationFrame(id)
       clearTimeout(durationId)
     }
-    playing = player(event.data)
+    currPlayer = player(event.data)
   })
 
+  /**
+   * @param {{ path: string; name: string; }} file
+   */
   function player(file) {
     const WIDTH = (canvasElement.width = window.innerWidth)
     susresBtn.textContent = 'Loading'
     susresBtn.classList.add('disabled')
-    let paused = false
-    let source, startedAt, pausedAt, currentBuffer, length, played
+
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
     analyser.smoothingTimeConstant = 0.0
@@ -44,56 +48,51 @@
     const request = new XMLHttpRequest()
     request.open('GET', file.path)
     request.responseType = 'arraybuffer'
-    request.onload = () => audioCtx.decodeAudioData(request.response, play, onBufferError)
-
+    request.onload = () => audioCtx.decodeAudioData(request.response, start, onBufferError)
     request.send()
+
     fileLabel.innerHTML = file.name
+    const source = audioCtx.createBufferSource()
 
-    susresBtn.onclick = () => (paused ? play() : stop())
+    // Test this
+    source.onended = event => {
+      clearTimeout(durationId)
+      susresBtn.disabled = true
+      susresBtn.textContent = 'Done'
+      susresBtn.classList.add('disabled')
+      cancelAnimationFrame(id)
+      vscode.postMessage({ type: 'finished' })
+    }
 
-    function play(buffer) {
-      if (audioCtx.state === 'closed') return
-      source = audioCtx.createBufferSource()
-      if (buffer) currentBuffer = buffer
-      source.buffer = currentBuffer
-      source.connect(audioCtx.destination)
-      source.connect(analyser)
-
-      paused = false
-      susresBtn.textContent = 'Pause'
-      susresBtn.classList.remove('disabled')
-      // TODO: susres
-      if (pausedAt) {
-        startedAt = Date.now() - pausedAt
-        source.start(0, pausedAt / 1000)
-      } else {
-        startedAt = Date.now()
-        source.start(0)
-        length = Math.trunc(source.buffer.duration)
-      }
-      durationWatch()
-      draw()
-      susresBtn.disabled = false
-
-      source.onended = event => {
-        clearTimeout(durationId)
-        if (played >= length) {
-          susresBtn.disabled = true
-          susresBtn.textContent = 'Done'
-          susresBtn.classList.add('disabled')
-          durationText.innerHTML = `- ${fmtMSS(played)} | ${fmtMSS(length)}`
+    susresBtn.onclick = () => {
+      if (audioCtx.state === 'running') {
+        audioCtx.suspend().then(() => {
+          susresBtn.textContent = 'Resume'
           cancelAnimationFrame(id)
-          vscode.postMessage({ type: 'finished' })
-        }
+        })
+      } else {
+        //suspended
+        audioCtx.resume().then(() => {
+          susresBtn.textContent = 'Pause'
+          draw()
+          durationWatch()
+        })
       }
     }
 
-    function stop() {
-      pausedAt = Date.now() - startedAt
-      paused = true
-      susresBtn.textContent = 'Resume'
-      cancelAnimationFrame(id)
-      source.stop()
+    function start(buffer) {
+      // This prevents clicking too fast - closed before starting
+      if (audioCtx.state === 'closed') return
+      source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+      source.start()
+      draw()
+      durationWatch()
+
+      susresBtn.textContent = 'Pause'
+      susresBtn.disabled = false
+      susresBtn.classList.remove('disabled')
     }
 
     function onBufferError(err) {
@@ -101,9 +100,10 @@
     }
 
     function durationWatch() {
-      if (!paused) {
-        played = Math.trunc((Date.now() - startedAt) / 1000)
-        durationText.innerHTML = `- ${fmtMSS(played)} | ${fmtMSS(length)}`
+      if (audioCtx.state === 'running') {
+        const { contextTime } = audioCtx.getOutputTimestamp()
+        const length = Math.trunc(source.buffer.duration)
+        durationText.innerHTML = `- ${fmtMSS(Math.trunc(contextTime))} | ${fmtMSS(length)}`
         durationId = setTimeout(durationWatch, 1000)
       }
     }
