@@ -32,7 +32,7 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
    */
   function player(file) {
     const WIDTH = (canvasElement.width = window.innerWidth)
-    togglePlayback('loading')
+    togglePlaybackButtons('loading')
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
     analyser.smoothingTimeConstant = 0.0
@@ -44,9 +44,7 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
 
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
     for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
-      for (let j = 3; j <= 7; j++) {
-        imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
-      }
+      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
     }
 
     const request = new XMLHttpRequest()
@@ -57,12 +55,14 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
 
     fileLabel.innerHTML = file.name
     let source = audioCtx.createBufferSource()
-    let buffer
+    let buffer,
+      startAt,
+      played = 0
 
     // Test this
     source.onended = event => {
       clearTimeout(durationId)
-      togglePlayback('done')
+      togglePlaybackButtons('done')
       cancelAnimationFrame(id)
       vscode.postMessage({ type: 'finished' })
     }
@@ -72,34 +72,22 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
         audioCtx.suspend().then(() => {
           susresBtn.innerHTML = PLAY_ICON
           cancelAnimationFrame(id)
+          played += Date.now() - startAt
         })
       } else {
         //suspended
         audioCtx.resume().then(() => {
           susresBtn.innerHTML = PAUSE_ICON
+          startAt = Date.now()
           draw()
           durationWatch()
         })
       }
     }
 
-    backBtn.onclick = () => {
-      console.log('hello')
-      const { contextTime } = audioCtx.getOutputTimestamp()
-      source = audioCtx.createBufferSource()
-      source.buffer = buffer
-      source.connect(audioCtx.destination)
-      source.connect(analyser)
-      source.start()
-      source.start(contextTime - 5)
-    }
+    backBtn.onclick = () => seek(-5000)
 
-    forwardBtn.onclick = () => {
-      console.log('hell123o')
-      const { contextTime } = audioCtx.getOutputTimestamp()
-      source = audioCtx.createBufferSource()
-      source.start(contextTime + 5)
-    }
+    forwardBtn.onclick = () => seek(5000)
 
     function start(theBuffer) {
       // This prevents clicking too fast - closed before starting
@@ -110,16 +98,32 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
       source.connect(analyser)
       source.start()
       draw()
+      startAt = Date.now()
       durationWatch()
 
-      togglePlayback('playing')
+      togglePlaybackButtons('playing')
     }
 
     function onBufferError(err) {
       vscode.postMessage({ type: 'error', message: `Error with decoding audio data -> ${err}` })
     }
 
-    function togglePlayback(state) {
+    function seek(ms) {
+      source.disconnect(audioCtx.destination)
+      source.disconnect(analyser)
+
+      source = audioCtx.createBufferSource()
+      source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+
+      played += Date.now() - startAt
+      played += ms
+      startAt = Date.now()
+      source.start(0, played / 1000)
+    }
+
+    function togglePlaybackButtons(state) {
       switch (state) {
         case 'loading':
           susresBtn.textContent = 'Loading'
@@ -146,9 +150,9 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
 
     function durationWatch() {
       if (audioCtx.state === 'running') {
-        const { contextTime } = audioCtx.getOutputTimestamp()
+        const durationPlayed = Date.now() - startAt + played
         const length = Math.trunc(source.buffer.duration)
-        durationText.innerHTML = `- ${fmtMSS(Math.trunc(contextTime))} | ${fmtMSS(length)}`
+        durationText.innerHTML = `- ${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(length)}`
         durationId = setTimeout(durationWatch, 1000)
       }
     }
@@ -161,9 +165,7 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
     function draw() {
       id = requestAnimationFrame(draw)
       analyser.getByteFrequencyData(dataArray)
-      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) {
-        imageDataFrame.data[y] = dataArray[i]
-      }
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) imageDataFrame.data[y] = dataArray[i]
       canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : (x = 0)
     }
