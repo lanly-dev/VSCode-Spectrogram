@@ -1,3 +1,4 @@
+<!-- This one if for not using susres -->
 <html>
 
 <head>
@@ -33,9 +34,7 @@
 
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
     for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
-      for (let j = 3; j <= 7; j++) {
-        imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
-      }
+      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
     }
 
     const request = new XMLHttpRequest()
@@ -43,6 +42,8 @@
     request.responseType = 'arraybuffer'
     request.onload = () => ctx.decodeAudioData(request.response, onBufferLoad, onBufferError)
     request.send()
+
+    document.getElementById('toggle').onclick = () => paused ? play() : stop()
 
     function play() {
       sourceNode = ctx.createBufferSource()
@@ -54,8 +55,7 @@
       if (pausedAt) {
         startedAt = Date.now() - pausedAt
         sourceNode.start(0, pausedAt / 1000)
-      }
-      else {
+      } else {
         startedAt = Date.now()
         sourceNode.start(0)
       }
@@ -83,18 +83,10 @@
     function draw() {
       id = requestAnimationFrame(draw)
       analyser.getByteFrequencyData(dataArray)
-      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) {
-        imageDataFrame.data[y] = dataArray[i]
-      }
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) imageDataFrame.data[y] = dataArray[i]
       canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : x = 0
     }
-
-    document.getElementById('toggle').onclick = () => {
-      if (paused) play()
-      else stop()
-    }
-
   </script>
 </body>
 

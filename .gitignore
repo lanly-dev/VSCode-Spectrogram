@@ -1,10 +1,11 @@
-.vscode-test/
+.vscode-test
 *.mp3
 *.ogg
 *.vsix
-dist/
-icon/res/
-node_modules/
+dist
+icon/res
+node_modules
 package-lock.json
 ref/*
 !ref/spec*.html
+test
