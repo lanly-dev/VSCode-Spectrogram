@@ -1,0 +1,134 @@
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>Spectrogram 3</title>
+</head>
+
+<body>
+
+  <canvas id='canvas'></canvas>
+  <p id='loading'>loading</p>
+  <p id='duration'></p>
+  <div id='playback' style='display:none'>
+    <button id='b5s' onclick='seek(-5000)'>back5s</button>
+    <button id='susres'>play/pause</button>
+    <button id='f5s' onclick='seek(5000)'>forth5s</button>
+  </div>
+
+  <script>
+    // npx http-server -o spec3.html
+    // With seeking function
+
+    const canvasElement = document.getElementById('canvas')
+    const canvasContext = canvasElement.getContext('2d')
+
+    const pbDiv = document.getElementById('playback')
+    const loadingP = document.getElementById('loading')
+    const durationText = document.getElementById('duration')
+
+    const WIDTH = canvasElement.width = window.innerWidth
+    canvasElement.height = 512
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+    const analyser = audioCtx.createAnalyser()
+    analyser.smoothingTimeConstant = 0.0
+    analyser.fftSize = 1024
+
+    let source = audioCtx.createBufferSource()
+    let buffer, id, startAt, played = 0, isFirst = true
+
+    const bufferLength = analyser.frequencyBinCount
+    const eightBufferLength = 8 * bufferLength
+    const dataArray = new Uint8Array(bufferLength)
+
+    const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
+    for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
+      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
+    }
+
+    const request = new XMLHttpRequest()
+    request.open('GET', 'test.mp3', true)
+    request.responseType = 'arraybuffer'
+    request.onload = () => audioCtx.decodeAudioData(request.response, start, onBufferError)
+    request.send()
+
+    document.getElementById('susres').onclick = () => {
+      if (audioCtx.state === 'running') {
+        audioCtx.suspend().then(() => {
+          cancelAnimationFrame(id)
+          played += Date.now() - startAt
+        })
+      } else if (isFirst) { // due to starting automatically prevention from the browser
+        source.start()
+        startAt = Date.now()
+        draw()
+        durationWatch()
+        isFirst = false
+      } else {
+        // if suspended then resume
+        audioCtx.resume().then(() => {
+          startAt = Date.now()
+          draw()
+          durationWatch()
+        })
+      }
+    }
+
+    function start(theBuffer) {
+      source = audioCtx.createBufferSource()
+      buffer = theBuffer
+      source.buffer = theBuffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+      startAt = Date.now()
+
+      loadingP.style.display = 'none'
+      pbDiv.style.display = 'block'
+    }
+
+    function seek(ms) {
+      console.log('SEEK', ms)
+      source.disconnect(audioCtx.destination)
+      source.disconnect(analyser)
+
+      source = audioCtx.createBufferSource()
+      source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+
+      played += Date.now() - startAt
+      played += ms
+      startAt = Date.now()
+      source.start(0, played / 1000)
+    }
+
+    function durationWatch() {
+      if (audioCtx.state === 'running' || isFirst) {
+        const durationPlayed = Date.now() - startAt + played
+        const length = Math.trunc(source.buffer.duration)
+        durationText.innerHTML = `${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(length)}`
+        durationId = setTimeout(durationWatch, 1000)
+      }
+    }
+
+    function fmtMSS(s) {
+      return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s
+    }
+
+    function onBufferError(e) {
+      console.log('onBufferError', e)
+    }
+
+    let x = 0
+    function draw() {
+      id = requestAnimationFrame(draw)
+      analyser.getByteFrequencyData(dataArray)
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) imageDataFrame.data[y] = dataArray[i]
+      canvasContext.putImageData(imageDataFrame, x, 0)
+      x < WIDTH ? x++ : x = 0
+    }
+  </script>
+</body>
+
+</html>
