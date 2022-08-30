@@ -36,7 +36,7 @@
     analyser.fftSize = 1024
 
     let source = audioCtx.createBufferSource()
-    let buffer, id, startAt, played = 0, isFirst = true
+    let buffer, durationId, id, timer, startAt, played = 0, isFirst = true
 
     const bufferLength = analyser.frequencyBinCount
     const eightBufferLength = 8 * bufferLength
@@ -81,7 +81,10 @@
       source.buffer = theBuffer
       source.connect(audioCtx.destination)
       source.connect(analyser)
+      source.onended = end
+
       startAt = Date.now()
+      timer = Date.now()
 
       loadingP.style.display = 'none'
       pbDiv.style.display = 'block'
@@ -96,6 +99,7 @@
       source.buffer = buffer
       source.connect(audioCtx.destination)
       source.connect(analyser)
+      source.onended = end
 
       played += Date.now() - startAt
       played += ms
@@ -103,11 +107,20 @@
       source.start(0, played / 1000)
     }
 
+    function end() {
+      clearTimeout(durationId)
+      cancelAnimationFrame(id)
+      loadingP.innerHTML = 'Done'
+      loadingP.style.display = 'block'
+    }
+
     function durationWatch() {
       if (audioCtx.state === 'running' || isFirst) {
         const durationPlayed = Date.now() - startAt + played
+        const curDuration = fmtMSS(Math.trunc(durationPlayed / 1000))
         const length = Math.trunc(source.buffer.duration)
-        durationText.innerHTML = `${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(length)}`
+        const tDuration = fmtMSS(Math.trunc((Date.now() - timer) / 1000))
+        durationText.innerHTML = `${curDuration}| ${fmtMSS(length)} | Timer: ${tDuration}`
         durationId = setTimeout(durationWatch, 1000)
       }
     }
