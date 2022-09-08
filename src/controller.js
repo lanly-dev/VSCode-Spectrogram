@@ -2,6 +2,7 @@
 
 const PLAY_ICON = '<i class="codicon codicon-play"></i>'
 const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
+const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 
 ;(() => {
   const vscode = acquireVsCodeApi()
@@ -55,26 +56,37 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
 
     fileLabel.innerHTML = file.name
     let source = audioCtx.createBufferSource()
-    let buffer,
-      startAt,
-      played = 0
-
-    // Test this
-    source.onended = event => {
-      clearTimeout(durationId)
-      togglePlaybackButtons('done')
-      cancelAnimationFrame(id)
-      vscode.postMessage({ type: 'finished' })
-    }
+    // prettier-ignore
+    let buffer, startAt, length, played = 0, isEnded = false
 
     susresBtn.onclick = () => {
-      if (audioCtx.state === 'running') {
+      if (audioCtx.state === 'running' && !isEnded) {
         audioCtx.suspend().then(() => {
           susresBtn.innerHTML = PLAY_ICON
           cancelAnimationFrame(id)
           played += Date.now() - startAt
         })
+      } else if (isEnded) {
+        isEnded = false
+        // Similar to start() + seek()
+        source.onended = null
+        source.disconnect(audioCtx.destination)
+        source.disconnect(analyser)
+
+        source = audioCtx.createBufferSource()
+        source.buffer = buffer
+        source.connect(audioCtx.destination)
+        source.connect(analyser)
+        source.onended = playEnd
+        source.start()
+
+        draw()
+        startAt = Date.now()
+        played = 0
+        durationWatch()
+        togglePlaybackButtons('playing')
       } else {
+        console.log('###')
         //suspended
         audioCtx.resume().then(() => {
           susresBtn.innerHTML = PAUSE_ICON
@@ -86,21 +98,23 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
     }
 
     backBtn.onclick = () => seek(-5000)
-
     forwardBtn.onclick = () => seek(5000)
 
     function start(theBuffer) {
       // This prevents clicking too fast - closed before starting
       if (audioCtx.state === 'closed') return
+      isEnded = false
       buffer = theBuffer
       source.buffer = theBuffer
+      length = source.buffer.duration
       source.connect(audioCtx.destination)
       source.connect(analyser)
+      source.onended = playEnd
       source.start()
+
       draw()
       startAt = Date.now()
       durationWatch()
-
       togglePlaybackButtons('playing')
     }
 
@@ -109,6 +123,8 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
     }
 
     function seek(ms) {
+      // Memory leaks if seeking too many since source wasn't properly free (AudioContext.close())?
+      source.onended = null
       source.disconnect(audioCtx.destination)
       source.disconnect(analyser)
 
@@ -116,11 +132,23 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
       source.buffer = buffer
       source.connect(audioCtx.destination)
       source.connect(analyser)
+      source.onended = playEnd
 
       played += Date.now() - startAt
       played += ms
+      played = Math.max(played, 0)
       startAt = Date.now()
       source.start(0, played / 1000)
+
+      if (audioCtx.state === 'suspended') updateDurationText()
+    }
+
+    function playEnd() {
+      isEnded = true
+      clearTimeout(durationId)
+      togglePlaybackButtons('ended')
+      cancelAnimationFrame(id)
+      vscode.postMessage({ type: 'Finish playing' })
     }
 
     function togglePlaybackButtons(state) {
@@ -139,9 +167,9 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
           backBtn.style.display = 'inline-block'
           forwardBtn.style.display = 'inline-block'
           break
-        case 'done':
-          susresBtn.textContent = 'Done'
-          susresBtn.disabled = true
+        case 'ended':
+          susresBtn.innerHTML = REFRESH_ICON
+          durationText.innerHTML = null
           backBtn.style.display = 'none'
           forwardBtn.style.display = 'none'
           break
@@ -150,11 +178,14 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
 
     function durationWatch() {
       if (audioCtx.state === 'running') {
-        const durationPlayed = Date.now() - startAt + played
-        const length = Math.trunc(source.buffer.duration)
-        durationText.innerHTML = `- ${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(length)}`
+        updateDurationText()
         durationId = setTimeout(durationWatch, 1000)
       }
+    }
+
+    function updateDurationText() {
+      const durationPlayed = Date.now() - startAt + played
+      durationText.innerHTML = `- ${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(Math.trunc(length))}`
     }
 
     function fmtMSS(s) {

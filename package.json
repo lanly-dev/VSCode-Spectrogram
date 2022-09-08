@@ -23,8 +23,8 @@
     "views": {
       "explorer": [
         {
-          "id": "spec-explorer",
-          "name": "Spec Explorer"
+          "id": "spectrogram-explorer",
+          "name": "spectrogram"
         }
       ]
     }
@@ -35,10 +35,14 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
-    "@types/node": "^17.0.35",
-    "@types/vscode": "^1.67.0",
+    "@types/node": "^18.7.16",
+    "@types/vscode": "^1.71.0",
     "@types/vscode-webview": "^1.57.0",
     "copy-webpack-plugin": "^11.0.0",
+    "eslint": "^8.23.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   },
   "repository": {
     "type": "git",

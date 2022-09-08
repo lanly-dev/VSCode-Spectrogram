@@ -8,7 +8,7 @@ class TreeView {
     const path = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null
     const specTreeDataProvider = new SpecTreeDataProvider(path)
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', specTreeDataProvider))
-    return vscode.window.createTreeView('spec-explorer', {
+    return vscode.window.createTreeView('spectrogram-explorer', {
       treeDataProvider: specTreeDataProvider,
       showCollapseAll: true
     })
