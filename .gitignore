@@ -5,7 +5,8 @@
 demo
 dist
 icon/res
+lab/*
+!lab/spec*.html
+!lab/README.md
 node_modules
 package-lock.json
-ref/*
-!ref/spec*.html
