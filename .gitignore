@@ -1,10 +1,11 @@
+.token
 .vscode-test
 *.mp3
 *.ogg
 *.vsix
 demo
 dist
-icon/res
+media/res
 lab/*
 !lab/spec*.html
 !lab/README.md
