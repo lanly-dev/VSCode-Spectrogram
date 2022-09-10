@@ -2,10 +2,10 @@
 *.mp3
 *.ogg
 *.vsix
+demo
 dist
 icon/res
 node_modules
 package-lock.json
 ref/*
 !ref/spec*.html
-test

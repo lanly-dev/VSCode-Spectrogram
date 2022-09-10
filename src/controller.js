@@ -57,7 +57,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     fileLabel.innerHTML = file.name
     let source = audioCtx.createBufferSource()
     // prettier-ignore
-    let buffer, startAt, length, played = 0, isEnded = false
+    let buffer, startAt, length, lengthMs, played = 0, isEnded = false
 
     susresBtn.onclick = () => {
       if (audioCtx.state === 'running' && !isEnded) {
@@ -107,6 +107,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       buffer = theBuffer
       source.buffer = theBuffer
       length = source.buffer.duration
+      lengthMs = length * 1000
       source.connect(audioCtx.destination)
       source.connect(analyser)
       source.onended = playEnd
@@ -123,6 +124,9 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     }
 
     function seek(ms) {
+      if (played === 0 && ms < 0) return
+      if (played === lengthMs && ms > 0) return
+
       // Memory leaks if seeking too many since source wasn't properly free (AudioContext.close())?
       source.onended = null
       source.disconnect(audioCtx.destination)
@@ -136,7 +140,8 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 
       played += Date.now() - startAt
       played += ms
-      played = Math.max(played, 0)
+      if (played < 0) played = 0
+      if (played > lengthMs) played = lengthMs
       startAt = Date.now()
       source.start(0, played / 1000)
 
