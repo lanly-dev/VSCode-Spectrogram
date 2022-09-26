@@ -45,6 +45,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     const dataArray = new Uint8Array(bufferLength)
 
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
+    // TODO: note this
     for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
       for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
     }
@@ -87,7 +88,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         durationWatch()
         togglePlaybackButtons('playing')
       } else {
-        //suspended
+        // Was suspended so resume it
         audioCtx.resume().then(() => {
           susresBtn.innerHTML = PAUSE_ICON
           startAt = Date.now()
@@ -124,6 +125,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     }
 
     function seek(ms) {
+      played += Date.now() - startAt
       if (played === 0 && ms < 0) return
       if (played === lengthMs && ms > 0) return
 
@@ -138,7 +140,6 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.connect(analyser)
       source.onended = playEnd
 
-      played += Date.now() - startAt
       played += ms
       if (played < 0) played = 0
       if (played > lengthMs) played = lengthMs
