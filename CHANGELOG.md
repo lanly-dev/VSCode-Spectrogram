@@ -6,37 +6,52 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Future Works]
 - [Display duration in explorer](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
 - Generate spectrogram faster than real time, depend on Web Audio API?
-- Minimize package size --> [blocked that cause by Pug](https://github.com/pugjs/pug/issues/2889#issuecomment-456477196) due to its Uglify.js dependency.
+- New icon
 - More colors
-- Playback time slider
 - Real-time input mode/recorder
-- Support more audio formats (Depend on vscode)
-- Switch back [suspend/resume](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/AudioContext) instead using start/stop --> blocked that cause by Chrome? since Firefox works fine
+- Seeker bar slider
+- [Support more audio codecs](https://code.visualstudio.com/updates/v1_71#_ffmpeg-codecs-support)
 ---
 
+## [2.0.0] - September 2022
+- Add seeking 5s back and fort buttons
+- Reduce extension size with Webpack
+- Support flac
+- Switch to `main` branch
+- Use [Codicons](https://microsoft.github.io/vscode-codicons/dist/codicon.html)
+- Use resume/suspend methods
+-  files, MB, 1.71.0
+
+Notes:
+- **Finally! This extension is working normally** 🙌🎊🎉🥳🥂
+- It turns out that vscode doesn't ship mp3 codec with its ffmpeg library (it probably got removed in the past since this extension worked before) and recently add it back in v1.71 - [Issue](https://github.com/microsoft/vscode/ssues/48494)
+- Put back resume/suspend since the issue got fixed for electron/chromium [Issue1052747](https://bugs.chromium.org/p/chromium/issues/detail?id=1052747) [Issue1018499](https://bugs.chromium.org/p/chromium/issues/detail?id=1018499)
+- Reduce extension size - it was funny to see previous version use webpack to minimize the 1 file - `controller.js`
+- All previous versions of this extension will not work in any recent vscode versions
+
 ## [1.1.0] - December 2019
-- Remove Semantic
-- Update CSS
 - Display duration
 - Minor bugfixes
-- Switch method suspend/resume --> start/stop
-- 3524 files, 4.33MB
+- Remove [Semantic](https://semantic-ui.com)
+- Switch method suspend/resume -> start/stop
+- Update CSS
+- 3524 files, 4.33MB, 1.41.0
 
-Note:
-- Still, this extension only works in exploration build, tested on 1.41 E7|C78 😥
-- Not so sure why it doesn't work in stable/insider build on E6|C76 according to 1.0.1 note 🤔
+Notes:
+- Still, this extension only works for exploration build, tested on 1.41 E7|C78 😥 - [vscode1.37 - exploration](https://github.com/microsoft/vscode/issues/76069)
+- Not sure why it doesn't work for stable/insider build on E6|C76 according to 1.0.1 note 🤔
 
-Reference:
+References:
 - https://stackoverflow.com/a/37770048/7526434
 - https://stackoverflow.com/a/18562855/7526434
 ---
 
 ## [1.0.1] - September 2019
-- Fixed path issue for other OS platforms
+- Fixed path issue for other OS platforms - tested on MacOS and Ubuntu
 - Set VS Code version requirement to 1.40 - Wait for VS Code to update to newer Chrome version
-- 6723 files, 10.2MB
+- 6723 files, 10.2MB, 1.38.0
 
-Note:
+Notes:
 - Pumped up the VS Code requirement to 1.40 due to Web Audio API bug, probably from Chrome
 - Just right after the 1st release, the Web Audio API stops working on 1.30 to 1.39 of VS code (VS code 1.38 stable build is on Electron 4 | Chrome 69)
 - The extension works (except the pause/resume function - API bug again) on VS code exploration build 1.37 with ELectron 6 | Chrome 76
@@ -45,9 +60,9 @@ Note:
 
 ## [1.0.0] - May 2019
 - Initial release
-- 6725 files, 10.2MB
+- 6725 files, 10.2MB, 1.30.0
 
-Reference:
+References:
 - https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 - https://github.com/mdn/webaudio-examples/blob/master/audiocontext-states/index.html
 - https://wbrickner.wordpress.com/2016/09/27/awesome-js-html-spectrogram/
