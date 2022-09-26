@@ -5,5 +5,5 @@
     "checkJs": true /* Typecheck .js files. */,
     "lib": ["es6", "dom"]
   },
-  "exclude": ["node_modules", "ref", "src/bundle.js"]
+  "exclude": ["node_modules", "dist"]
 }

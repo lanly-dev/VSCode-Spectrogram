@@ -1,15 +1,8 @@
 {
   "env": {
-    "browser": false,
-    "commonjs": true,
+    "browser": true,
     "es6": true,
     "node": true
-  },
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "sourceType": "module"
   },
   "rules": {
     "constructor-super": "warn",

@@ -1,7 +1,4 @@
 .token
-.vscode-test
-*.mp3
-*.ogg
 *.vsix
 demo
 dist

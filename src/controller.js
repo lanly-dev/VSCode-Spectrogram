@@ -5,6 +5,7 @@ const PAUSE_ICON = '<i class="codicon codicon-debug-pause"></i>'
 const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 
 ;(() => {
+  // eslint-disable-next-line no-undef
   const vscode = acquireVsCodeApi()
   const canvasElement = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
   const canvasContext = canvasElement.getContext('2d')

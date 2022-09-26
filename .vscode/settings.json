@@ -5,6 +5,7 @@
     "flac",
     "lanly",
     "susres",
+    "Typecheck",
     "webaudio"
   ],
   "editor.rulers": [120],
