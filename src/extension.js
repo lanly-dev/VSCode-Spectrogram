@@ -1,5 +1,6 @@
 'use strict'
 const path = require('path')
+// @ts-ignore
 const { ExtensionContext, Uri, window } = require('vscode')
 const { TreeView } = require('./treeView')
 const { SpecWebviewPanel } = require('./webview')

@@ -86,7 +86,6 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         durationWatch()
         togglePlaybackButtons('playing')
       } else {
-        console.log('###')
         //suspended
         audioCtx.resume().then(() => {
           susresBtn.innerHTML = PAUSE_ICON
