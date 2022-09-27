@@ -2,6 +2,7 @@
 .token
 .vscode
 **/*.map
+CHANGELOG.md
 demo
 jsconfig.json
 lab

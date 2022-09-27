@@ -13,9 +13,14 @@
   "keywords": [
     "Audio",
     "spectrogram",
-    "mp3"
+    "mp3",
+    "flac"
   ],
   "icon": "media/spec.png",
+  "galleryBanner": {
+    "color": "white",
+    "theme": "light"
+  },
   "activationEvents": [
     "onStartupFinished"
   ],

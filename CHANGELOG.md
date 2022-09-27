@@ -20,11 +20,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Switch to `main` branch
 - Use [Codicons](https://microsoft.github.io/vscode-codicons/dist/codicon.html)
 - Use resume/suspend methods
--  files, MB, 1.71.0
+- webpack 5.74.0 compiled with 1 warning in 9069 ms
+- 12 files, 278.85KB, 1.71.0
 
 Known issues:
 - Webpack watch doesn't work as expect - it does rebuild but not each change-save
-- Vscode's debugging need to click run/and restart in order to launch the app (maybe only for MacOS)
+- Vscode's debugging needs to click twice - run and restart in order to launch the app (maybe only for macOS)
 
 Notes:
 - **Finally! This extension works on vscode stable version** 🙌🎊🎉🥳🥂
@@ -51,7 +52,7 @@ References:
 ---
 
 ## [1.0.1] - September 2019
-- Fixed path issue for other OS platforms - tested on MacOS and Ubuntu
+- Fixed path issue for other OS platforms - tested on macOS and Ubuntu
 - Set VS Code version requirement to 1.40 - Wait for VS Code to update to newer Chrome version
 - 6723 files, 10.2MB, 1.38.0
 
