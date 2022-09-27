@@ -1,7 +1,7 @@
 # Spectrogram
 This is an extension that play and display spectrogram of mp3 and flac audio files.
 
-![](images/spec-sc3.PNG)
+![](media/spec-sc3.png)
 
 ## Release Notes
 

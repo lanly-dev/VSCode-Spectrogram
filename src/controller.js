@@ -33,7 +33,8 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
    * @param {{ path: string; name: string; }} file
    */
   function player(file) {
-    const WIDTH = (canvasElement.width = window.innerWidth)
+    canvasElement.width = window.innerWidth - 10
+    const WIDTH = canvasElement.width
     togglePlaybackButtons('loading')
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()

@@ -22,10 +22,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Use resume/suspend methods
 -  files, MB, 1.71.0
 
+Known issues:
+- Webpack watch doesn't work as expect - it does rebuild but not each change-save
+- Vscode's debugging need to click run/and restart in order to launch the app (maybe only for MacOS)
+
 Notes:
-- **Finally! This extension is working normally** 🙌🎊🎉🥳🥂
+- **Finally! This extension works on vscode stable version** 🙌🎊🎉🥳🥂
 - It turns out that vscode doesn't ship mp3 codec with its ffmpeg library (it probably got removed in the past since this extension worked before) and recently add it back in v1.71 - [Issue](https://github.com/microsoft/vscode/ssues/48494)
-- Put back resume/suspend since the issue got fixed for electron/chromium [Issue1052747](https://bugs.chromium.org/p/chromium/issues/detail?id=1052747) [Issue1018499](https://bugs.chromium.org/p/chromium/issues/detail?id=1018499)
+- Put back resume/suspend since the issue got fixed for electron/chromium - [Issue1052747](https://bugs.chromium.org/p/chromium/issues/detail?id=1052747) | [Issue1018499](https://bugs.chromium.org/p/chromium/issues/detail?id=1018499)
 - Reduce extension size - it was funny to see previous version use webpack to minimize the 1 file - `controller.js`
 - All previous versions of this extension will not work in any recent vscode versions
 
