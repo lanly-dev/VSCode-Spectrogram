@@ -80,10 +80,9 @@ class SpecTreeDataProvider {
 }
 
 class fileItem extends vscode.TreeItem {
-  constructor(label, filePath, collapsibleState, descriptionText, command) {
+  constructor(label, filePath, collapsibleState, descriptionText) {
     super(label, collapsibleState)
     this.collapsibleState = collapsibleState
-    this.command = command
     this.contextValue = 'dependency'
     this.description = descriptionText
     this.filePath = filePath
