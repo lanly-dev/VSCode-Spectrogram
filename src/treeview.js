@@ -48,7 +48,7 @@ class SpecTreeDataProvider {
   getFiles(thePath) {
     // name
     const toFileItem = (name, targetPath, type) => {
-      if (type == 'directory') {
+      if (type === 'directory') {
         let descriptionText, collapsibleState
         const filesCount = fs.readdirSync(path.join(targetPath, name)).filter(this.isSupportedMedia).length
         if (filesCount > 0) {
@@ -74,8 +74,8 @@ class SpecTreeDataProvider {
   }
 
   isSupportedMedia(name) {
-    if (name.indexOf('.mp3') != -1) return true
-    if (name.indexOf('.flac') != -1) return true
+    if (name.indexOf('.mp3') !== -1) return true
+    if (name.indexOf('.flac') !== -1) return true
   }
 }
 

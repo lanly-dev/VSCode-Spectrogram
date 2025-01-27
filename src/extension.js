@@ -1,18 +1,18 @@
 'use strict'
 const path = require('path')
-// @ts-ignore
-const { ExtensionContext, Uri, window } = require('vscode')
-const { TreeView } = require('./treeView')
+const { Uri, window } = require('vscode')
+const { TreeView } = require('./treeview')
 const { SpecWebviewPanel } = require('./webview')
 
 /**
- * @param {ExtensionContext} context
+ * @param {import('vscode').ExtensionContext} context
  */
 function activate(context) {
   const specExplorer = TreeView.create(context)
   specExplorer.onDidChangeSelection(file => {
     try {
       file.selection[0].fullFilePath
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       window.showInformationMessage('Slow down 😵')
       return
@@ -28,8 +28,8 @@ function activate(context) {
     SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
     SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
       ({ type, message }) => {
-        if (type == 'finished') window.showInformationMessage('Finished Playing 😎')
-        else if (type == 'error') window.showErrorMessage(`${message} 😵`)
+        if (type === 'finished') window.showInformationMessage('Finished Playing 😎')
+        else if (type === 'error') window.showErrorMessage(`${message} 😵`)
       },
       undefined,
       context.subscriptions

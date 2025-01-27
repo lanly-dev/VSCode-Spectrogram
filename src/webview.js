@@ -29,8 +29,11 @@ class SpecWebviewPanel {
 
     const panelSetting = { enableScripts: true }
 
-    if (os.platform() == 'darwin') {
-      panelSetting.localResourceRoots = [Uri.file(__dirname), Uri.file(workspace.workspaceFolders[0].uri.fsPath)]
+    if (os.platform() === 'darwin') {
+      panelSetting.localResourceRoots = [
+        Uri.file(__dirname),
+        Uri.file(workspace.workspaceFolders[0].uri.fsPath)
+      ]
     }
 
     const viewColumn = column || ViewColumn.One

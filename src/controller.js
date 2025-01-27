@@ -48,7 +48,8 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
     // TODO: note this
     for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
-      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
+      // Format: 0,0,0,255 | 255,255,255,255
+      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255
     }
 
     const request = new XMLHttpRequest()
@@ -160,26 +161,26 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 
     function togglePlaybackButtons(state) {
       switch (state) {
-        case 'loading':
-          susresBtn.textContent = 'Loading'
-          susresBtn.classList.add('disabled')
-          susresBtn.disabled = true
-          backBtn.style.display = 'none'
-          forwardBtn.style.display = 'none'
-          break
-        case 'playing':
-          susresBtn.innerHTML = PAUSE_ICON
-          susresBtn.classList.remove('disabled')
-          susresBtn.disabled = false
-          backBtn.style.display = 'inline-block'
-          forwardBtn.style.display = 'inline-block'
-          break
-        case 'ended':
-          susresBtn.innerHTML = REFRESH_ICON
-          durationText.innerHTML = null
-          backBtn.style.display = 'none'
-          forwardBtn.style.display = 'none'
-          break
+      case 'loading':
+        susresBtn.textContent = 'Loading'
+        susresBtn.classList.add('disabled')
+        susresBtn.disabled = true
+        backBtn.style.display = 'none'
+        forwardBtn.style.display = 'none'
+        break
+      case 'playing':
+        susresBtn.innerHTML = PAUSE_ICON
+        susresBtn.classList.remove('disabled')
+        susresBtn.disabled = false
+        backBtn.style.display = 'inline-block'
+        forwardBtn.style.display = 'inline-block'
+        break
+      case 'ended':
+        susresBtn.innerHTML = REFRESH_ICON
+        durationText.innerHTML = null
+        backBtn.style.display = 'none'
+        forwardBtn.style.display = 'none'
+        break
       }
     }
 

@@ -44,21 +44,22 @@
     "wp": "webpack",
     "wp-watch": "webpack --watch",
     "task-clean-output": "ts-node tasks.js clean",
-    "lint": "eslint --fix ."
+    "lint": "eslint --format summary-chart .",
+    "lint-fix": "eslint --fix ."
   },
   "devDependencies": {
     "@types/node": "^22.10.10",
     "@types/vscode": "^1.96.0",
     "@types/vscode-webview": "^1.57.5",
     "@vscode/codicons": "^0.0.36",
+    "@vscode/vsce": "^3.2.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "eslint": "^9.19.0",
+    "eslint-formatter-summary-chart": "^0.3.0",
     "eslint-plugin-jsdoc": "^50.6.3",
     "pug": "^3.0.3",
     "shelljs": "^0.8.5",
-    "ts-node": "^10.9.2",
-    "vsce": "^2.15.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
   },
