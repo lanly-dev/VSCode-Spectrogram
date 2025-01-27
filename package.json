@@ -44,7 +44,8 @@
     "wp": "webpack",
     "wp-watch": "webpack --watch",
     "task-clean-output": "ts-node tasks.js clean",
-    "lint": "eslint --format summary-chart .",
+    "lint": "eslint .",
+    "lint-sum": "eslint --format summary-chart .",
     "lint-fix": "eslint --fix ."
   },
   "devDependencies": {

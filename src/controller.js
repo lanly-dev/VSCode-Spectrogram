@@ -35,7 +35,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
   function player(file) {
     canvasElement.width = window.innerWidth - 10
     const WIDTH = canvasElement.width
-    togglePlaybackButtons('loading')
+    togglePlaybackButtons('LOADING')
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
     analyser.smoothingTimeConstant = 0.0
@@ -46,21 +46,29 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     const dataArray = new Uint8Array(bufferLength)
 
     const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
-    // TODO: note this
-    for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
-      // Format: 0,0,0,255 | 255,255,255,255
-      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255
+    // Initialize the imageDataFrame with alternating black and white pixels
+    for (let i = 0; i < imageDataFrame.data.length; i += 8) {
+      // Set the first pixel to black (0, 0, 0, 255)
+      imageDataFrame.data[i] = 0
+      imageDataFrame.data[i + 1] = 0
+      imageDataFrame.data[i + 2] = 0
+      imageDataFrame.data[i + 3] = 255
+
+      // Set the second pixel to white (255, 255, 255, 255)
+      imageDataFrame.data[i + 4] = 255
+      imageDataFrame.data[i + 5] = 255
+      imageDataFrame.data[i + 6] = 255
+      imageDataFrame.data[i + 7] = 255
     }
 
     const request = new XMLHttpRequest()
     request.open('GET', file.path)
     request.responseType = 'arraybuffer'
-    request.onload = () => audioCtx.decodeAudioData(request.response, start, onBufferError)
+    request.onload = () => audioCtx.decodeAudioData(request.response, audioCtxSetup, onBufferError)
     request.send()
 
     fileLabel.innerHTML = file.name
     let source = audioCtx.createBufferSource()
-    // prettier-ignore
     let buffer, startAt, length, lengthMs, played = 0, isEnded = false
 
     susresBtn.onclick = () => {
@@ -88,7 +96,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         startAt = Date.now()
         played = 0
         durationWatch()
-        togglePlaybackButtons('playing')
+        togglePlaybackButtons('PLAYING')
       } else {
         // Was suspended so resume it
         audioCtx.resume().then(() => {
@@ -103,7 +111,8 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     backBtn.onclick = () => seek(-5000)
     forwardBtn.onclick = () => seek(5000)
 
-    function start(theBuffer) {
+    function audioCtxSetup(theBuffer) {
+      console.log('AudioContext setup', audioCtx.state)
       // This prevents clicking too fast - closed before starting
       if (audioCtx.state === 'closed') return
       isEnded = false
@@ -116,10 +125,9 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.onended = playEnd
       source.start()
 
-      draw()
       startAt = Date.now()
       durationWatch()
-      togglePlaybackButtons('playing')
+      togglePlaybackButtons('READY')
     }
 
     function onBufferError(err) {
@@ -154,28 +162,29 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     function playEnd() {
       isEnded = true
       clearTimeout(durationId)
-      togglePlaybackButtons('ended')
+      togglePlaybackButtons('ENDED')
       cancelAnimationFrame(id)
       vscode.postMessage({ type: 'Finish playing' })
     }
 
     function togglePlaybackButtons(state) {
       switch (state) {
-      case 'loading':
-        susresBtn.textContent = 'Loading'
+      case 'LOADING':
+        susresBtn.textContent = 'Loading...'
         susresBtn.classList.add('disabled')
         susresBtn.disabled = true
         backBtn.style.display = 'none'
         forwardBtn.style.display = 'none'
         break
-      case 'playing':
-        susresBtn.innerHTML = PAUSE_ICON
+      case 'READY':
+      case 'PLAYING':
+        susresBtn.innerHTML = state === 'PLAYING' ? PAUSE_ICON : PLAY_ICON
         susresBtn.classList.remove('disabled')
         susresBtn.disabled = false
         backBtn.style.display = 'inline-block'
         forwardBtn.style.display = 'inline-block'
         break
-      case 'ended':
+      case 'ENDED':
         susresBtn.innerHTML = REFRESH_ICON
         durationText.innerHTML = null
         backBtn.style.display = 'none'
