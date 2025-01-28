@@ -4,10 +4,10 @@ const path = require('path')
 const fs = require('fs')
 
 class TreeView {
-  static create(context) {
+  static create() {
     const path = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null
     const specTreeDataProvider = new SpecTreeDataProvider(path)
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('spec', specTreeDataProvider))
+
     return vscode.window.createTreeView('spectrogram-explorer', {
       treeDataProvider: specTreeDataProvider,
       showCollapseAll: true
@@ -35,14 +35,8 @@ class SpecTreeDataProvider {
       vscode.window.showInformationMessage('Please open a folder')
       return Promise.resolve([])
     }
-
     if (element) return this.getFiles(path.join(element.filePath, element.label))
     else return this.getFiles(this.workspaceRoot)
-  }
-
-  // ??
-  provideTextDocumentContent(uri, token) {
-    return uri + token
   }
 
   getFiles(thePath) {

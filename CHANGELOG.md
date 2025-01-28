@@ -5,7 +5,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Future Works]
 - [Display duration in explorer](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
-- More colors
 - Real-time input mode/recorder
 - [Support more audio codecs](https://code.visualstudio.com/updates/v1_71#_ffmpeg-codecs-support)
 ---

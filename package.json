@@ -41,8 +41,8 @@
       "properties": {
         "spectrogram.rgbColor": {
           "type": "object",
-          "default": { "r": 0, "g": 0, "b": 0 },
-          "description": "RGB color for the drawing",
+          "default": { "r": 100, "g": 0, "b": 0 },
+          "description": "RGB color for the spectrogram",
           "properties": {
             "r": {
               "type": "number",

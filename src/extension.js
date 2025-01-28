@@ -8,7 +8,7 @@ const { SpecWebviewPanel } = require('./webview')
  * @param {import('vscode').ExtensionContext} context
  */
 function activate(context) {
-  const specExplorer = TreeView.create(context)
+  const specExplorer = TreeView.create()
   specExplorer.onDidChangeSelection(file => {
     try {
       file.selection[0].fullFilePath
@@ -25,7 +25,7 @@ function activate(context) {
     const songPath = Uri.file(fullFilePath)
     SpecWebviewPanel.createOrShow(context.extensionPath)
     const panel = SpecWebviewPanel.currentPanel.panel.webview.asWebviewUri(songPath)
-    const rgbColor = workspace.getConfiguration('spectrogram').get('rgbColor', { r: 0, g: 0, b: 0 })
+    const rgbColor = workspace.getConfiguration('spectrogram').get('rgbColor')
     SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label, rgbColor })
     SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
       ({ type, message }) => {
