@@ -26,6 +26,14 @@ class SpecTreeDataProvider {
     this.workspaceRoot = workspaceRoot
     this._onDidChangeTreeData = new vscode.EventEmitter()
     this.onDidChangeTreeData = this._onDidChangeTreeData.event
+    this.showDuration = vscode.workspace.getConfiguration('spectrogram').get('showDuration', true)
+
+    vscode.workspace.onDidChangeConfiguration(event => {
+      if (event.affectsConfiguration('spectrogram.showDuration')) {
+        this.showDuration = vscode.workspace.getConfiguration('spectrogram').get('showDuration', true)
+        this.refresh()
+      }
+    })
   }
 
   refresh() {
@@ -61,8 +69,9 @@ class SpecTreeDataProvider {
         }
         return new fileItem(name, targetPath, collapsibleState, descriptionText)
       } else {
-        const duration = await this.getAudioDuration(path.join(targetPath, name))
-        return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None, duration)
+        let descriptionText = ''
+        if (this.showDuration) descriptionText = await this.getAudioDuration(path.join(targetPath, name))
+        return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None, descriptionText)
       }
     }
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()

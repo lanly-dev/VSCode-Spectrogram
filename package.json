@@ -43,6 +43,12 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "spectrogram.revealInFileExplorer",
+          "when": "false"
+        }
+      ],
       "view/item/context": [
         {
           "command": "spectrogram.revealInFileExplorer",
@@ -75,6 +81,11 @@
               "maximum": 255
             }
           }
+        },
+        "spectrogram.showDuration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show audio's duration in the treeview"
         }
       }
     }

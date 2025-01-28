@@ -11,6 +11,7 @@
 }
 
 #seekbar {
+  cursor: pointer;
   margin: auto;
   width: 90%;
 }
