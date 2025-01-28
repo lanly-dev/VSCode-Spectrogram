@@ -9,7 +9,12 @@ class TreeView {
     const path = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null
     const specTreeDataProvider = new SpecTreeDataProvider(path)
 
-    return vscode.window.createTreeView('spectrogram-explorer', {
+    vscode.commands.registerCommand('spectrogram.revealInFileExplorer', (fileItem) => {
+      const uri = vscode.Uri.file(fileItem.fullFilePath)
+      vscode.commands.executeCommand('revealFileInOS', uri)
+    })
+
+    return vscode.window.createTreeView('spectrogram', {
       treeDataProvider: specTreeDataProvider,
       showCollapseAll: true
     })
@@ -98,7 +103,7 @@ class fileItem extends vscode.TreeItem {
   constructor(label, filePath, collapsibleState, descriptionText) {
     super(label, collapsibleState)
     this.collapsibleState = collapsibleState
-    this.contextValue = 'dependency'
+    this.contextValue = 'fileItem'
     this.description = descriptionText
     this.filePath = filePath
 

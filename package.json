@@ -29,10 +29,25 @@
     "views": {
       "explorer": [
         {
-          "id": "spectrogram-explorer",
+          "id": "spectrogram",
           "name": "Spectrogram",
           "icon": "media/icon.svg",
           "contextualTitle": "Spectrogram"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "spectrogram.revealInFileExplorer",
+        "title": "Reveal in File Explorer"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "spectrogram.revealInFileExplorer",
+          "when": "view == spectrogram && viewItem == fileItem",
+          "group": "navigation"
         }
       ]
     },
