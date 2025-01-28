@@ -2,6 +2,7 @@
 const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
+const { loadMusicMetadata } = require('music-metadata') // Import loadMusicMetadata
 
 class TreeView {
   static create() {
@@ -39,9 +40,9 @@ class SpecTreeDataProvider {
     else return this.getFiles(this.workspaceRoot)
   }
 
-  getFiles(thePath) {
+  async getFiles(thePath) {
     // name
-    const toFileItem = (name, targetPath, type) => {
+    const toFileItem = async (name, targetPath, type) => {
       if (type === 'directory') {
         let descriptionText, collapsibleState
         const filesCount = fs.readdirSync(path.join(targetPath, name)).filter(this.isSupportedMedia).length
@@ -54,17 +55,37 @@ class SpecTreeDataProvider {
           descriptionText = 'Empty'
         }
         return new fileItem(name, targetPath, collapsibleState, descriptionText)
-      } else return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None)
+      } else {
+        const duration = await this.getAudioDuration(path.join(targetPath, name))
+        return new fileItem(name, targetPath, vscode.TreeItemCollapsibleState.None, duration)
+      }
     }
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
 
     const subDirs = fs.readdirSync(thePath).filter(isDirectory)
     const mp3s = fs.readdirSync(thePath).filter(this.isSupportedMedia)
 
-    const subDirsItem = subDirs.map(name => toFileItem(name, thePath, 'directory'))
-    const mp3filesItem = mp3s.map(name => toFileItem(name, thePath, 'audio'))
+    const subDirsItem = await Promise.all(subDirs.map(name => toFileItem(name, thePath, 'directory')))
+    const mp3filesItem = await Promise.all(mp3s.map(name => toFileItem(name, thePath, 'audio')))
 
     return subDirsItem.concat(mp3filesItem)
+  }
+
+  async getAudioDuration(filePath) {
+    const mm = await loadMusicMetadata() // Dynamically load the ESM module
+    return mm.parseFile(filePath).then(metadata => {
+      const duration = metadata.format.duration
+      return this.formatDuration(duration)
+    }).catch(err => {
+      console.error(`Error parsing file ${filePath}:`, err)
+      return 'Unknown duration'
+    })
+  }
+
+  formatDuration(duration) {
+    const minutes = Math.floor(duration / 60)
+    const seconds = Math.floor(duration % 60)
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
   isSupportedMedia(name) {
