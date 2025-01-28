@@ -16,6 +16,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
   const forwardBtn = /** @type {HTMLButtonElement} */ (document.getElementById('forwardBtn'))
   const durationText = document.getElementById('duration')
   const fileLabel = document.getElementById('label')
+  const seekbar = /** @type {HTMLInputElement} */ (document.getElementById('seekbar'))
 
   let currPlayer, id, durationId
   // Receive data from vscode
@@ -110,6 +111,8 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 
     backBtn.onclick = () => seek(-5000)
     forwardBtn.onclick = () => seek(5000)
+    seekbar.oninput = () => seekTo(seekbar.value)
+    seekbar.onmousemove = (event) => showHoverDuration(event)
 
     function audioCtxSetup(theBuffer) {
       // This prevents clicking too fast - closed before starting
@@ -132,6 +135,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       startAt = Date.now()
       durationWatch()
       togglePlaybackButtons('READY')
+      seekbar.max = lengthMs.toString()
     }
 
     function onBufferError(err) {
@@ -163,6 +167,27 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       if (audioCtx.state === 'suspended') updateDurationText()
     }
 
+    function seekTo(ms) {
+      played = parseInt(ms)
+      if (played < 0) played = 0
+      if (played > lengthMs) played = lengthMs
+
+      source.onended = null
+      source.disconnect(audioCtx.destination)
+      source.disconnect(analyser)
+
+      source = audioCtx.createBufferSource()
+      source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+      source.onended = playEnd
+
+      startAt = Date.now()
+      source.start(0, played / 1000)
+
+      if (audioCtx.state === 'suspended') updateDurationText()
+    }
+
     function playEnd() {
       isEnded = true
       clearTimeout(durationId)
@@ -179,6 +204,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         susresBtn.disabled = true
         backBtn.style.display = 'none'
         forwardBtn.style.display = 'none'
+        seekbar.style.display = 'none'
         break
       case 'READY':
       case 'PLAYING':
@@ -187,12 +213,14 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         susresBtn.disabled = false
         backBtn.style.display = 'inline-block'
         forwardBtn.style.display = 'inline-block'
+        seekbar.style.display = 'block'
         break
       case 'ENDED':
         susresBtn.innerHTML = REFRESH_ICON
         durationText.innerHTML = null
         backBtn.style.display = 'none'
         forwardBtn.style.display = 'none'
+        seekbar.style.display = 'none'
         break
       }
     }
@@ -207,10 +235,16 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     function updateDurationText() {
       const durationPlayed = Date.now() - startAt + played
       durationText.innerHTML = `- ${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(Math.trunc(length))}`
+      seekbar.value = durationPlayed.toString()
     }
 
     function fmtMSS(s) {
       return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s
+    }
+
+    function showHoverDuration(event) {
+      const hoverTime = (event.offsetX / seekbar.clientWidth) * lengthMs
+      durationText.innerHTML = `- ${fmtMSS(Math.trunc(hoverTime / 1000))} | ${fmtMSS(Math.trunc(length))}`
     }
 
     let x = 0

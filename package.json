@@ -30,7 +30,7 @@
       "explorer": [
         {
           "id": "spectrogram-explorer",
-          "name": "spectrogram",
+          "name": "Spectrogram",
           "icon": "media/icon.svg",
           "contextualTitle": "Spectrogram"
         }
