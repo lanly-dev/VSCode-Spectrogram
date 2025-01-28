@@ -1,6 +1,6 @@
 'use strict'
 const path = require('path')
-const { Uri, window } = require('vscode')
+const { Uri, window, workspace } = require('vscode')
 const { TreeView } = require('./treeview')
 const { SpecWebviewPanel } = require('./webview')
 
@@ -25,7 +25,8 @@ function activate(context) {
     const songPath = Uri.file(fullFilePath)
     SpecWebviewPanel.createOrShow(context.extensionPath)
     const panel = SpecWebviewPanel.currentPanel.panel.webview.asWebviewUri(songPath)
-    SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
+    const rgbColor = workspace.getConfiguration('spectrogram').get('rgbColor', { r: 0, g: 0, b: 0 })
+    SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label, rgbColor })
     SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
       ({ type, message }) => {
         if (type === 'DONE') window.showInformationMessage(`${message} 😎`)

@@ -7,10 +7,10 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 ;(() => {
   // eslint-disable-next-line no-undef
   const vscode = acquireVsCodeApi()
-  const canvasElement = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
-  const canvasContext = canvasElement.getContext('2d')
+  const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
+  const canvasContext = canvas.getContext('2d')
 
-  canvasElement.height = 512
+  canvas.height = 512
   const susresBtn = /** @type {HTMLButtonElement} */ (document.getElementById('susresBtn'))
   const backBtn = /** @type {HTMLButtonElement} */ (document.getElementById('backBtn'))
   const forwardBtn = /** @type {HTMLButtonElement} */ (document.getElementById('forwardBtn'))
@@ -18,7 +18,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
   const fileLabel = document.getElementById('label')
   const seekbar = /** @type {HTMLInputElement} */ (document.getElementById('seekbar'))
 
-  let currPlayer, id, durationId
+  let currPlayer, id, durationId, rgbColor
   // Receive data from vscode
   window.addEventListener('message', event => {
     if (currPlayer) {
@@ -27,6 +27,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       cancelAnimationFrame(id)
       clearTimeout(durationId)
     }
+    rgbColor = event.data.rgbColor
     currPlayer = player(event.data)
   })
 
@@ -34,8 +35,8 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
    * @param {{ path: string; name: string; }} file
    */
   function player(file) {
-    canvasElement.width = window.innerWidth - 10
-    const WIDTH = canvasElement.width
+    canvas.width = window.innerWidth - 10
+    const WIDTH = canvas.width
     togglePlaybackButtons('LOADING')
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
@@ -46,16 +47,18 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     const eightBufferLength = 8 * bufferLength
     const dataArray = new Uint8Array(bufferLength)
 
-    const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
+    const imageDataFrame = canvasContext.createImageData(2, canvas.height)
     // Initialize the imageDataFrame with alternating black and white pixels
     for (let i = 0; i < imageDataFrame.data.length; i += 8) {
       // Set the first pixel to black (0, 0, 0, 255)
+      // This is the background color
       imageDataFrame.data[i] = 0
       imageDataFrame.data[i + 1] = 0
       imageDataFrame.data[i + 2] = 0
       imageDataFrame.data[i + 3] = 255
 
       // Set the second pixel to white (255, 255, 255, 255)
+      // This is the color of the vertical moving line
       imageDataFrame.data[i + 4] = 255
       imageDataFrame.data[i + 5] = 255
       imageDataFrame.data[i + 6] = 255
@@ -119,7 +122,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       if (audioCtx.state === 'closed') return
       if (audioCtx.state === 'suspended') {
         // https://goo.gl/7K7WLu
-        vscode.postMessage({ type: 'INFO', message: 'Please click the play button' })
+        vscode.postMessage({ type: 'INFO', message: 'Please click the play button - autoplay policy' })
       }
 
       isEnded = false
@@ -130,11 +133,13 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.connect(audioCtx.destination)
       source.connect(analyser)
       source.onended = playEnd
+      if (audioCtx.state === 'running') draw()
       source.start()
 
       startAt = Date.now()
       durationWatch()
       togglePlaybackButtons('READY')
+      seekbar.value = '0'
       seekbar.max = lengthMs.toString()
     }
 
@@ -251,7 +256,12 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     function draw() {
       id = requestAnimationFrame(draw)
       analyser.getByteFrequencyData(dataArray)
-      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) imageDataFrame.data[y] = dataArray[i]
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) {
+        imageDataFrame.data[y] = rgbColor.r
+        imageDataFrame.data[y + 1] = rgbColor.g
+        imageDataFrame.data[y + 2] = rgbColor.b
+        imageDataFrame.data[y + 3] = dataArray[i]
+      }
       canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : (x = 0)
     }

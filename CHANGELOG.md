@@ -7,7 +7,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - [Display duration in explorer](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
 - More colors
 - Real-time input mode/recorder
-- Seeker bar slider
 - [Support more audio codecs](https://code.visualstudio.com/updates/v1_71#_ffmpeg-codecs-support)
 ---
 

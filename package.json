@@ -35,6 +35,33 @@
           "contextualTitle": "Spectrogram"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "spectrogram.rgbColor": {
+          "type": "object",
+          "default": { "r": 0, "g": 0, "b": 0 },
+          "description": "RGB color for the drawing",
+          "properties": {
+            "r": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "g": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "b": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            }
+          }
+        }
+      }
     }
   },
   "scripts": {
