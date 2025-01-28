@@ -5,8 +5,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Future Works]
 - [Display duration in explorer](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
-- Generate spectrogram faster than real time, depend on Web Audio API?
-- New icon
 - More colors
 - Real-time input mode/recorder
 - Seeker bar slider
@@ -14,9 +12,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ---
 
 ## [2.0.0] - September 2022
-- Add seeking 5s back and fort buttons
+- Add seeking 5s back and forth buttons
 - Reduce extension size with Webpack
-- Support flac
+- Support FLAC
 - Switch to `main` branch
 - Use [Codicons](https://microsoft.github.io/vscode-codicons/dist/codicon.html)
 - Use resume/suspend methods
@@ -24,19 +22,19 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 12 files, 278.85KB, 1.71.0
 
 Known issues:
-- Webpack watch doesn't work as expect - it does rebuild but not each change-save
-- Vscode's debugging needs to click twice - run and restart in order to launch the app (maybe only for macOS)
+- Webpack watch doesn't work as expected - it does rebuild but not on each change-save
+- VS Code's debugging needs to click twice - run and restart in order to launch the app (maybe only for macOS)
 
 Notes:
-- **Finally! This extension works on vscode stable version** 🙌🎊🎉🥳🥂
-- It turns out that vscode doesn't ship mp3 codec with its ffmpeg library (it probably got removed in the past since this extension worked before) and recently add it back in v1.71 - [Issue](https://github.com/microsoft/vscode/ssues/48494)
-- Put back resume/suspend since the issue got fixed for electron/chromium - [Issue1052747](https://bugs.chromium.org/p/chromium/issues/detail?id=1052747) | [Issue1018499](https://bugs.chromium.org/p/chromium/issues/detail?id=1018499)
-- Reduce extension size - it was funny to see previous version use webpack to minimize the 1 file - `controller.js`
-- All previous versions of this extension will not work in any recent vscode versions
+- **Finally! This extension works on VS Code stable version** 🙌🎊🎉🥳🥂
+- It turns out that VS Code doesn't ship MP3 codec with its FFmpeg library (it probably got removed in the past since this extension worked before) and recently added it back in v1.71 - [Issue](https://github.com/microsoft/vscode/issues/48494)
+- Put back resume/suspend since the issue got fixed for Electron/Chromium - [Issue1052747](https://bugs.chromium.org/p/chromium/issues/detail?id=1052747) | [Issue1018499](https://bugs.chromium.org/p/chromium/issues/detail?id=1018499)
+- Reduce extension size - it was funny to see the previous version use Webpack to minimize the 1 file - `controller.js`
+- All previous versions of this extension will not work in any recent VS Code versions
 
 ## [1.1.0] - December 2019
 - Display duration
-- Minor bugfixes
+- Minor bug fixes
 - Remove [Semantic](https://semantic-ui.com)
 - Switch method suspend/resume -> start/stop
 - Update CSS
@@ -58,8 +56,8 @@ References:
 
 Notes:
 - Pumped up the VS Code requirement to 1.40 due to Web Audio API bug, probably from Chrome
-- Just right after the 1st release, the Web Audio API stops working on 1.30 to 1.39 of VS code (VS code 1.38 stable build is on Electron 4 | Chrome 69)
-- The extension works (except the pause/resume function - API bug again) on VS code exploration build 1.37 with ELectron 6 | Chrome 76
+- Just right after the 1st release, the Web Audio API stops working on 1.30 to 1.39 of VS Code (VS Code 1.38 stable build is on Electron 4 | Chrome 69)
+- The extension works (except the pause/resume function - API bug again) on VS Code exploration build 1.37 with Electron 6 | Chrome 76
 - This extension will not be working for a while 😥
 ---
 

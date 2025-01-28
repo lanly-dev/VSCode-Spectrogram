@@ -14,7 +14,7 @@ function activate(context) {
       file.selection[0].fullFilePath
     // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      window.showInformationMessage('Slow down 😵')
+      window.showInformationMessage('Slow down 😵‍💫')
       return
     }
     const { fullFilePath } = file.selection[0]
