@@ -112,9 +112,13 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     forwardBtn.onclick = () => seek(5000)
 
     function audioCtxSetup(theBuffer) {
-      console.log('AudioContext setup', audioCtx.state)
       // This prevents clicking too fast - closed before starting
       if (audioCtx.state === 'closed') return
+      if (audioCtx.state === 'suspended') {
+        // https://goo.gl/7K7WLu
+        vscode.postMessage({ type: 'INFO', message: 'Please click the play button' })
+      }
+
       isEnded = false
       buffer = theBuffer
       source.buffer = theBuffer
@@ -164,7 +168,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       clearTimeout(durationId)
       togglePlaybackButtons('ENDED')
       cancelAnimationFrame(id)
-      vscode.postMessage({ type: 'Finish playing' })
+      vscode.postMessage({ type: 'DONE', message: 'Playing ended' })
     }
 
     function togglePlaybackButtons(state) {

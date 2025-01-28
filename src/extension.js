@@ -28,8 +28,9 @@ function activate(context) {
     SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
     SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
       ({ type, message }) => {
-        if (type === 'finished') window.showInformationMessage('Finished Playing 😎')
-        else if (type === 'error') window.showErrorMessage(`${message} 😵`)
+        if (type === 'DONE') window.showInformationMessage(`${message} 😎`)
+        else if (type === 'ERROR') window.showErrorMessage(`${message} 😵`)
+        else window.showInformationMessage(message)
       },
       undefined,
       context.subscriptions
