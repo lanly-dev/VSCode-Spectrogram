@@ -77,12 +77,12 @@ class SpecTreeDataProvider {
     const isDirectory = name => fs.lstatSync(path.join(thePath, name)).isDirectory()
 
     const subDirs = fs.readdirSync(thePath).filter(isDirectory)
-    const mp3s = fs.readdirSync(thePath).filter(this.isSupportedMedia)
+    const audios = fs.readdirSync(thePath).filter(this.isSupportedMedia)
 
     const subDirsItem = await Promise.all(subDirs.map(name => toFileItem(name, thePath, 'directory')))
-    const mp3filesItem = await Promise.all(mp3s.map(name => toFileItem(name, thePath, 'audio')))
+    const audioFilesItem = await Promise.all(audios.map(name => toFileItem(name, thePath, 'audio')))
 
-    return subDirsItem.concat(mp3filesItem)
+    return subDirsItem.concat(audioFilesItem)
   }
 
   async getAudioDuration(filePath) {
@@ -97,14 +97,14 @@ class SpecTreeDataProvider {
   }
 
   formatDuration(duration) {
+    if (!duration) return 'Unknown duration'
     const minutes = Math.floor(duration / 60)
     const seconds = Math.floor(duration % 60)
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
   isSupportedMedia(name) {
-    if (name.indexOf('.mp3') !== -1) return true
-    if (name.indexOf('.flac') !== -1) return true
+    return /\.(mp3|flac|wav)$/i.test(name)
   }
 }
 

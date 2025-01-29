@@ -4,10 +4,22 @@ All notable changes to the "Spectrogram" extension will be documented in this fi
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Future Works]
-- [Display duration in explorer](https://code.visualstudio.com/api/extension-guides/tree-view#view-actions)
 - Real-time input mode/recorder
-- [Support more audio codecs](https://code.visualstudio.com/updates/v1_71#_ffmpeg-codecs-support)
+
 ---
+## [3.0.0] - February 2025
+- Support WAV
+- Add seekbar
+- Add color RBG config
+- Add duration in treeview
+- New icon and logo
+
+### Notes
+- Clicking treeview item some time able trigger playing the song, but due to the autoplay policy, most of the time you have to click play button inside the webview
+
+### References
+- Treeview API https://code.visualstudio.com/api/extension-guides/tree-view#view-actions
+- VS Code support codecs https://code.visualstudio.com/updates/v1_71#_ffmpeg-codecs-support
 
 ## [2.0.0] - September 2022
 - Add seeking 5s back and forth buttons
