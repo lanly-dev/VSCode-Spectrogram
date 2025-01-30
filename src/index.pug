@@ -5,18 +5,15 @@ html
     meta(http-equiv='Content-Security-Policy',
       content=`default-src 'none';\
       script-src 'nonce-${nonce}';\
-      media-src https: vscode-webview:;\
-      style-src https: 'unsafe-inline';\
-      font-src data: https: vscode-resource:;\
+      style-src 'nonce-${nonce}' https:;\
+      font-src vscode-resource: data: https:;\
       connect-src vscode-resource: 'nonce-${nonce}';`)
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${styleCssUri}`)
     link(nonce=`${nonce}`, rel='stylesheet', type='text/css', href=`${codiconsUri}`)
-    script(nonce=`${nonce}`, src=`${wavesurferUri}`)
 
   body
     canvas#canvas
-    #waveform
     div.text-center
       button#backBtn.d-none
         i.codicon.codicon-play.me-n5

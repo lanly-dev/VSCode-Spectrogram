@@ -57,14 +57,12 @@ export class SpecWebviewPanel {
   }
 
   getHtmlForWebview(extensionUri) {
-    const { webview } = this.panel
-    const wavesurferUri = webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'wavesurfer.min.js')))
-    const controllerUri = webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'controller.js')))
-    const styleCssUri = webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'style.css')))
-    const codiconsUri =  webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'codicon.css')))
+    const controllerUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'controller.js')))
+    const styleCssUri = this.panel.webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'style.css')))
+    const codiconsUri =  this.panel.webview.asWebviewUri(Uri.file(path.join(extensionUri, 'dist', 'codicon.css')))
     const compiledFunction = pug.compileFile(path.join(__dirname, 'index.pug'))
 
-    return compiledFunction({ wavesurferUri, controllerUri, codiconsUri, styleCssUri, nonce: getNonce() })
+    return compiledFunction({ controllerUri, codiconsUri, styleCssUri, nonce: getNonce() })
   }
 }
 

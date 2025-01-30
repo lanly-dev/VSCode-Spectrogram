@@ -62,11 +62,7 @@
       "properties": {
         "spectrogram.rgbColor": {
           "type": "object",
-          "default": {
-            "r": 100,
-            "g": 0,
-            "b": 0
-          },
+          "default": { "r": 100, "g": 0, "b": 0 },
           "description": "RGB color for the spectrogram",
           "properties": {
             "r": {
@@ -124,9 +120,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/lanly-dev/VSCode-Spectrogram.git"
-  },
-  "dependencies": {
-    "music-metadata": "^10.8.0",
-    "wavesurfer.js": "^7.9.0"
   }
 }
