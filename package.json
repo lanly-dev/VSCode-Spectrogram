@@ -62,7 +62,11 @@
       "properties": {
         "spectrogram.rgbColor": {
           "type": "object",
-          "default": { "r": 100, "g": 0, "b": 0 },
+          "default": {
+            "r": 100,
+            "g": 0,
+            "b": 0
+          },
           "description": "RGB color for the spectrogram",
           "properties": {
             "r": {
@@ -100,6 +104,9 @@
     "lint": "eslint .",
     "lint-sum": "eslint --format summary-chart .",
     "lint-fix": "eslint --fix ."
+  },
+  "dependencies": {
+    "music-metadata": "^10.8.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.10",
