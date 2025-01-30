@@ -5,6 +5,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Future Works]
 - Real-time input mode/recorder
+- [Wavesurfer](https://wavesurfer.xyz/)
 
 ---
 ## [3.0.0] - February 2025

@@ -4,6 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 const path = require('path')
 const CODICON_PATH = '@vscode/codicons/dist/'
+const WAVE_SURFER_PATH = 'node_modules/wavesurfer.js/dist/wavesurfer.min.js'
 const isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
       patterns: [
         { from: require.resolve(`${CODICON_PATH}/codicon.css`) },
         { from: require.resolve(`${CODICON_PATH}/codicon.ttf`) },
+        { from: WAVE_SURFER_PATH },
         { from: 'src/controller.js' },
         { from: 'src/index.pug' },
         { from: 'src/style.css' }

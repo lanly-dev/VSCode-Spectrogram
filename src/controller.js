@@ -9,6 +9,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
   const vscode = acquireVsCodeApi()
   const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
   const canvasContext = canvas.getContext('2d')
+  const waveform = document.getElementById('waveform')
 
   canvas.height = 512
   const susresBtn = /** @type {HTMLButtonElement} */ (document.getElementById('susresBtn'))
@@ -18,7 +19,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
   const fileLabel = document.getElementById('label')
   const seekbar = /** @type {HTMLInputElement} */ (document.getElementById('seekbar'))
 
-  let currPlayer, id, durationId, rgbColor
+  let currPlayer, id, durationId, rgbColor, wavesurfer
   // Receive data from vscode
   window.addEventListener('message', event => {
     if (currPlayer) {
@@ -81,6 +82,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
           susresBtn.innerHTML = PLAY_ICON
           cancelAnimationFrame(id)
           played += Date.now() - startAt
+          wavesurfer.pause()
         })
       } else if (isEnded) {
         isEnded = false
@@ -101,6 +103,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         played = 0
         durationWatch()
         togglePlaybackButtons('PLAYING')
+        wavesurfer.play()
       } else {
         // Was suspended so resume it
         audioCtx.resume().then(() => {
@@ -108,6 +111,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
           startAt = Date.now()
           draw()
           durationWatch()
+          wavesurfer.play()
         })
       }
     }
@@ -141,6 +145,18 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       togglePlaybackButtons('READY')
       seekbar.value = '0'
       seekbar.max = lengthMs.toString()
+
+      // @ts-ignore
+      // eslint-disable-next-line no-undef
+      wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'violet',
+        progressColor: 'purple',
+        backend: 'MediaElement',
+        mediaControls: false,
+        height: 128
+      })
+      wavesurfer.load(file.path)
     }
 
     function onBufferError(err) {
@@ -170,6 +186,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.start(0, played / 1000)
 
       if (audioCtx.state === 'suspended') updateDurationText()
+      wavesurfer.seekTo(played / lengthMs)
     }
 
     function seekTo(ms) {
@@ -191,6 +208,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.start(0, played / 1000)
 
       if (audioCtx.state === 'suspended') updateDurationText()
+      wavesurfer.seekTo(played / lengthMs)
     }
 
     function playEnd() {
@@ -199,6 +217,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       togglePlaybackButtons('ENDED')
       cancelAnimationFrame(id)
       vscode.postMessage({ type: 'DONE', message: 'Playing ended' })
+      wavesurfer.stop()
     }
 
     function togglePlaybackButtons(state) {
