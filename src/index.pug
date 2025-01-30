@@ -14,7 +14,7 @@ html
 
   body
     canvas#canvas
-    div
+    div.text-center
       button#backBtn.d-none
         i.codicon.codicon-play.me-n5
         i.codicon.codicon-play
@@ -22,6 +22,7 @@ html
       button#forwardBtn.d-none
         i.codicon.codicon-play.me-n5
         i.codicon.codicon-play
+      input#seekbar(type='range', min='0', value='0', step='1')
       span#label
       span#duration
     script(nonce=`${nonce}`, src=`${controllerUri}`)

@@ -4,6 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 const path = require('path')
 const CODICON_PATH = '@vscode/codicons/dist/'
+const isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {
   target: 'node',
@@ -30,7 +31,7 @@ module.exports = {
     })
   ],
   optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin({ extractComments: false }), new CssMinimizerPlugin()]
+    minimize: isProduction,
+    minimizer: isProduction ? [new TerserPlugin({ extractComments: false }), new CssMinimizerPlugin()] : []
   }
 }

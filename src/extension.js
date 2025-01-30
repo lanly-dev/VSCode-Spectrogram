@@ -1,20 +1,20 @@
 'use strict'
 const path = require('path')
-// @ts-ignore
-const { ExtensionContext, Uri, window } = require('vscode')
-const { TreeView } = require('./treeView')
+const { Uri, window, workspace } = require('vscode')
+const { TreeView } = require('./treeview')
 const { SpecWebviewPanel } = require('./webview')
 
 /**
- * @param {ExtensionContext} context
+ * @param {import('vscode').ExtensionContext} context
  */
 function activate(context) {
-  const specExplorer = TreeView.create(context)
+  const specExplorer = TreeView.create()
   specExplorer.onDidChangeSelection(file => {
     try {
       file.selection[0].fullFilePath
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      window.showInformationMessage('Slow down 😵')
+      window.showInformationMessage('Slow down 😵‍💫')
       return
     }
     const { fullFilePath } = file.selection[0]
@@ -25,11 +25,13 @@ function activate(context) {
     const songPath = Uri.file(fullFilePath)
     SpecWebviewPanel.createOrShow(context.extensionPath)
     const panel = SpecWebviewPanel.currentPanel.panel.webview.asWebviewUri(songPath)
-    SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label })
+    const rgbColor = workspace.getConfiguration('spectrogram').get('rgbColor')
+    SpecWebviewPanel.currentPanel.panel.webview.postMessage({ path: `${panel}`, name: label, rgbColor })
     SpecWebviewPanel.currentPanel.panel.webview.onDidReceiveMessage(
       ({ type, message }) => {
-        if (type == 'finished') window.showInformationMessage('Finished Playing 😎')
-        else if (type == 'error') window.showErrorMessage(`${message} 😵`)
+        if (type === 'DONE') window.showInformationMessage(`${message} 😎`)
+        else if (type === 'ERROR') window.showErrorMessage(`${message} 😵`)
+        else window.showInformationMessage(message)
       },
       undefined,
       context.subscriptions

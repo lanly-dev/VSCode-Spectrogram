@@ -7,17 +7,18 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 ;(() => {
   // eslint-disable-next-line no-undef
   const vscode = acquireVsCodeApi()
-  const canvasElement = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
-  const canvasContext = canvasElement.getContext('2d')
+  const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas'))
+  const canvasContext = canvas.getContext('2d')
 
-  canvasElement.height = 512
+  canvas.height = 512
   const susresBtn = /** @type {HTMLButtonElement} */ (document.getElementById('susresBtn'))
   const backBtn = /** @type {HTMLButtonElement} */ (document.getElementById('backBtn'))
   const forwardBtn = /** @type {HTMLButtonElement} */ (document.getElementById('forwardBtn'))
   const durationText = document.getElementById('duration')
   const fileLabel = document.getElementById('label')
+  const seekbar = /** @type {HTMLInputElement} */ (document.getElementById('seekbar'))
 
-  let currPlayer, id, durationId
+  let currPlayer, id, durationId, rgbColor
   // Receive data from vscode
   window.addEventListener('message', event => {
     if (currPlayer) {
@@ -26,6 +27,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       cancelAnimationFrame(id)
       clearTimeout(durationId)
     }
+    rgbColor = event.data.rgbColor
     currPlayer = player(event.data)
   })
 
@@ -33,9 +35,9 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
    * @param {{ path: string; name: string; }} file
    */
   function player(file) {
-    canvasElement.width = window.innerWidth - 10
-    const WIDTH = canvasElement.width
-    togglePlaybackButtons('loading')
+    canvas.width = window.innerWidth - 10
+    const WIDTH = canvas.width
+    togglePlaybackButtons('LOADING')
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
     analyser.smoothingTimeConstant = 0.0
@@ -45,21 +47,32 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     const eightBufferLength = 8 * bufferLength
     const dataArray = new Uint8Array(bufferLength)
 
-    const imageDataFrame = canvasContext.createImageData(2, canvasElement.height)
-    // TODO: note this
-    for (let i = 0; i < imageDataFrame.data.length * 4; i += 8) {
-      for (let j = 3; j <= 7; j++) imageDataFrame.data[i + j] = 255 // = 0,0,0,255 | 255,255,255,255
+    const imageDataFrame = canvasContext.createImageData(2, canvas.height)
+    // Initialize the imageDataFrame with alternating black and white pixels
+    for (let i = 0; i < imageDataFrame.data.length; i += 8) {
+      // Set the first pixel to black (0, 0, 0, 255)
+      // This is the background color
+      imageDataFrame.data[i] = 0
+      imageDataFrame.data[i + 1] = 0
+      imageDataFrame.data[i + 2] = 0
+      imageDataFrame.data[i + 3] = 255
+
+      // Set the second pixel to white (255, 255, 255, 255)
+      // This is the color of the vertical moving line
+      imageDataFrame.data[i + 4] = 255
+      imageDataFrame.data[i + 5] = 255
+      imageDataFrame.data[i + 6] = 255
+      imageDataFrame.data[i + 7] = 255
     }
 
     const request = new XMLHttpRequest()
     request.open('GET', file.path)
     request.responseType = 'arraybuffer'
-    request.onload = () => audioCtx.decodeAudioData(request.response, start, onBufferError)
+    request.onload = () => audioCtx.decodeAudioData(request.response, audioCtxSetup, onBufferError)
     request.send()
 
     fileLabel.innerHTML = file.name
     let source = audioCtx.createBufferSource()
-    // prettier-ignore
     let buffer, startAt, length, lengthMs, played = 0, isEnded = false
 
     susresBtn.onclick = () => {
@@ -87,7 +100,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         startAt = Date.now()
         played = 0
         durationWatch()
-        togglePlaybackButtons('playing')
+        togglePlaybackButtons('PLAYING')
       } else {
         // Was suspended so resume it
         audioCtx.resume().then(() => {
@@ -101,10 +114,17 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
 
     backBtn.onclick = () => seek(-5000)
     forwardBtn.onclick = () => seek(5000)
+    seekbar.oninput = () => seekTo(seekbar.value)
+    seekbar.onmousemove = (event) => showHoverDuration(event)
 
-    function start(theBuffer) {
+    function audioCtxSetup(theBuffer) {
       // This prevents clicking too fast - closed before starting
       if (audioCtx.state === 'closed') return
+      if (audioCtx.state === 'suspended') {
+        // https://goo.gl/7K7WLu
+        vscode.postMessage({ type: 'INFO', message: 'Please click the play button - autoplay policy' })
+      }
+
       isEnded = false
       buffer = theBuffer
       source.buffer = theBuffer
@@ -113,12 +133,17 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.connect(audioCtx.destination)
       source.connect(analyser)
       source.onended = playEnd
-      source.start()
 
-      draw()
+      if (audioCtx.state === 'running') {
+        draw()
+        togglePlaybackButtons('PLAYING')
+      } else togglePlaybackButtons('READY')
+
+      source.start()
       startAt = Date.now()
       durationWatch()
-      togglePlaybackButtons('playing')
+      seekbar.value = '0'
+      seekbar.max = lengthMs.toString()
     }
 
     function onBufferError(err) {
@@ -150,60 +175,95 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       if (audioCtx.state === 'suspended') updateDurationText()
     }
 
+    function seekTo(ms) {
+      played = parseInt(ms)
+      if (played < 0) played = 0
+      if (played > lengthMs) played = lengthMs
+
+      source.onended = null
+      source.disconnect(audioCtx.destination)
+      source.disconnect(analyser)
+
+      source = audioCtx.createBufferSource()
+      source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.connect(analyser)
+      source.onended = playEnd
+
+      startAt = Date.now()
+      source.start(0, played / 1000)
+
+      if (audioCtx.state === 'suspended') updateDurationText()
+    }
+
     function playEnd() {
       isEnded = true
       clearTimeout(durationId)
-      togglePlaybackButtons('ended')
+      togglePlaybackButtons('ENDED')
       cancelAnimationFrame(id)
-      vscode.postMessage({ type: 'Finish playing' })
+      vscode.postMessage({ type: 'DONE', message: 'Playing ended' })
     }
 
     function togglePlaybackButtons(state) {
       switch (state) {
-        case 'loading':
-          susresBtn.textContent = 'Loading'
-          susresBtn.classList.add('disabled')
-          susresBtn.disabled = true
-          backBtn.style.display = 'none'
-          forwardBtn.style.display = 'none'
-          break
-        case 'playing':
-          susresBtn.innerHTML = PAUSE_ICON
-          susresBtn.classList.remove('disabled')
-          susresBtn.disabled = false
-          backBtn.style.display = 'inline-block'
-          forwardBtn.style.display = 'inline-block'
-          break
-        case 'ended':
-          susresBtn.innerHTML = REFRESH_ICON
-          durationText.innerHTML = null
-          backBtn.style.display = 'none'
-          forwardBtn.style.display = 'none'
-          break
+      case 'LOADING':
+        susresBtn.textContent = 'Loading...'
+        susresBtn.classList.add('disabled')
+        susresBtn.disabled = true
+        backBtn.style.display = 'none'
+        forwardBtn.style.display = 'none'
+        seekbar.style.display = 'none'
+        break
+      case 'READY':
+      case 'PLAYING':
+        susresBtn.innerHTML = state === 'PLAYING' ? PAUSE_ICON : PLAY_ICON
+        susresBtn.classList.remove('disabled')
+        susresBtn.disabled = false
+        backBtn.style.display = 'inline-block'
+        forwardBtn.style.display = 'inline-block'
+        seekbar.style.display = 'block'
+        break
+      case 'ENDED':
+        susresBtn.innerHTML = REFRESH_ICON
+        durationText.innerHTML = null
+        backBtn.style.display = 'none'
+        forwardBtn.style.display = 'none'
+        seekbar.style.display = 'none'
+        break
       }
     }
 
     function durationWatch() {
-      if (audioCtx.state === 'running') {
-        updateDurationText()
-        durationId = setTimeout(durationWatch, 1000)
-      }
+      if (audioCtx.state !== 'running') return
+      updateDurationText()
+      durationId = setTimeout(durationWatch, 1000)
     }
 
     function updateDurationText() {
       const durationPlayed = Date.now() - startAt + played
       durationText.innerHTML = `- ${fmtMSS(Math.trunc(durationPlayed / 1000))} | ${fmtMSS(Math.trunc(length))}`
+      seekbar.value = durationPlayed.toString()
     }
 
     function fmtMSS(s) {
       return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s
     }
 
+    function showHoverDuration(event) {
+      const hoverTime = (event.offsetX / seekbar.clientWidth) * lengthMs
+      durationText.innerHTML = `- ${fmtMSS(Math.trunc(hoverTime / 1000))} | ${fmtMSS(Math.trunc(length))}`
+    }
+
     let x = 0
     function draw() {
       id = requestAnimationFrame(draw)
       analyser.getByteFrequencyData(dataArray)
-      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) imageDataFrame.data[y] = dataArray[i]
+      for (let i = 0, y = eightBufferLength; i < bufferLength; i++, y -= 8) {
+        imageDataFrame.data[y] = rgbColor.r
+        imageDataFrame.data[y + 1] = rgbColor.g
+        imageDataFrame.data[y + 2] = rgbColor.b
+        imageDataFrame.data[y + 3] = dataArray[i]
+      }
       canvasContext.putImageData(imageDataFrame, x, 0)
       x < WIDTH ? x++ : (x = 0)
     }

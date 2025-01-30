@@ -1,23 +1,31 @@
 # Spectrogram
-This is an extension that play and display spectrogram of mp3 and flac audio files. So, are you now curious to see how your favorite songs' spectrogram looks like? 🦝🤪💭
+This is an extension that plays and displays spectrograms of mp3 and flac audio files. Are you curious to see how your favorite songs' spectrograms look? 🦝🤪💭
 
 ![Spectrogram2.0.0](media/vscodeignore/spec-sc3.png)
 
 ## Release Notes
 
+### 3.0.0
+- Added support for `WAV`
+- Added seekbar
+- Added color configuration
+- Fixed bugs
+- Improved treeview
+- New logo and icon
+
 ### 2.0.0
-- Add `flac` support
-- Add 5s seeking buttons
-- Extension size greatly reduce
+- Added support for `FLAC`
+- Added 5-second seeking buttons
+- Greatly reduced extension size
 
 ### 1.1.0
-- Improve UI
-- Fix pause/resume
-- Fix minor bugs
-- Refactor code
+- Improved UI
+- Fixed pause/resume
+- Fixed minor bugs
+- Refactored code
 
 ### 1.0.1
-- Fix path issue for MacOS
+- Fixed path issue for macOS
 
 ### 1.0.0
 - Initial release of Spectrogram

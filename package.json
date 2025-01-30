@@ -29,10 +29,69 @@
     "views": {
       "explorer": [
         {
-          "id": "spectrogram-explorer",
-          "name": "spectrogram"
+          "id": "spectrogram",
+          "name": "Spectrogram",
+          "icon": "media/icon.svg",
+          "contextualTitle": "Spectrogram"
         }
       ]
+    },
+    "commands": [
+      {
+        "command": "spectrogram.revealInFileExplorer",
+        "title": "Reveal in File Explorer"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "spectrogram.revealInFileExplorer",
+          "when": "false"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "spectrogram.revealInFileExplorer",
+          "when": "view == spectrogram && viewItem == fileItem",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "spectrogram.rgbColor": {
+          "type": "object",
+          "default": {
+            "r": 100,
+            "g": 0,
+            "b": 0
+          },
+          "description": "RGB color for the spectrogram",
+          "properties": {
+            "r": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "g": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "b": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            }
+          }
+        },
+        "spectrogram.showDuration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show audio's duration in the treeview"
+        }
+      }
     }
   },
   "scripts": {
@@ -41,23 +100,29 @@
     "package": "webpack --mode production --devtool hidden-source-map",
     "wp": "webpack",
     "wp-watch": "webpack --watch",
-    "task-clean-output": "ts-node tasks.js clean"
+    "task-clean-output": "ts-node tasks.js clean",
+    "lint": "eslint .",
+    "lint-sum": "eslint --format summary-chart .",
+    "lint-fix": "eslint --fix ."
+  },
+  "dependencies": {
+    "music-metadata": "^10.8.0"
   },
   "devDependencies": {
-    "@types/node": "^18.7.23",
-    "@types/vscode": "^1.71.0",
-    "@types/vscode-webview": "^1.57.0",
-    "@vscode/codicons": "^0.0.32",
-    "copy-webpack-plugin": "^11.0.0",
-    "css-minimizer-webpack-plugin": "^4.1.0",
-    "eslint": "^8.24.0",
-    "eslint-plugin-jsdoc": "^39.3.6",
-    "pug": "^3.0.2",
+    "@types/node": "^22.10.10",
+    "@types/vscode": "^1.96.0",
+    "@types/vscode-webview": "^1.57.5",
+    "@vscode/codicons": "^0.0.36",
+    "@vscode/vsce": "^3.2.1",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "eslint": "^9.19.0",
+    "eslint-formatter-summary-chart": "^0.3.0",
+    "eslint-plugin-jsdoc": "^50.6.3",
+    "pug": "^3.0.3",
     "shelljs": "^0.8.5",
-    "ts-node": "^10.9.1",
-    "vsce": "^2.11.0",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1"
   },
   "repository": {
     "type": "git",

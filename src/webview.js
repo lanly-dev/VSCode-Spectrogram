@@ -4,19 +4,7 @@ const os = require('os')
 const path = require('path')
 const pug = require('pug')
 
-class SpecWebviewPanel {
-  constructor(panel, extensionPath) {
-    this.disposables = []
-    this.panel = panel
-    this.extensionPath = extensionPath
-
-    this.panel.onDidDispose(() => this.dispose(), null, this.disposables)
-    // eslint-disable-next-line no-unused-vars
-    this.panel.onDidChangeViewState(event => {}, null, this.disposables)
-    // eslint-disable-next-line no-unused-vars
-    this.panel.webview.onDidReceiveMessage(message => {}, null, this.disposables)
-    this.panel.webview.html = this.getHtmlForWebview(extensionPath)
-  }
+export class SpecWebviewPanel {
 
   static createOrShow(extensionPath) {
     const column = window.activeTextEditor ? window.activeTextEditor.viewColumn : undefined
@@ -29,8 +17,11 @@ class SpecWebviewPanel {
 
     const panelSetting = { enableScripts: true }
 
-    if (os.platform() == 'darwin') {
-      panelSetting.localResourceRoots = [Uri.file(__dirname), Uri.file(workspace.workspaceFolders[0].uri.fsPath)]
+    if (os.platform() === 'darwin') {
+      panelSetting.localResourceRoots = [
+        Uri.file(__dirname),
+        Uri.file(workspace.workspaceFolders[0].uri.fsPath)
+      ]
     }
 
     const viewColumn = column || ViewColumn.One
@@ -40,6 +31,19 @@ class SpecWebviewPanel {
 
   static revive(panel, extensionPath) {
     SpecWebviewPanel.currentPanel = new SpecWebviewPanel(panel, extensionPath)
+  }
+
+  constructor(panel, extensionPath) {
+    this.disposables = []
+    this.panel = panel
+    this.extensionPath = extensionPath
+
+    this.panel.onDidDispose(() => this.dispose(), null, this.disposables)
+    // eslint-disable-next-line no-unused-vars
+    this.panel.onDidChangeViewState(event => {}, null, this.disposables)
+    // eslint-disable-next-line no-unused-vars
+    this.panel.webview.onDidReceiveMessage(message => {}, null, this.disposables)
+    this.panel.webview.html = this.getHtmlForWebview(extensionPath)
   }
 
   dispose() {
@@ -71,5 +75,3 @@ function getNonce() {
   for (let i = 0; i < 32; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))
   return text
 }
-
-exports.SpecWebviewPanel = SpecWebviewPanel
