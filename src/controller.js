@@ -133,12 +133,15 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
       source.connect(audioCtx.destination)
       source.connect(analyser)
       source.onended = playEnd
-      if (audioCtx.state === 'running') draw()
-      source.start()
 
+      if (audioCtx.state === 'running') {
+        draw()
+        togglePlaybackButtons('PLAYING')
+      } else togglePlaybackButtons('READY')
+
+      source.start()
       startAt = Date.now()
       durationWatch()
-      togglePlaybackButtons('READY')
       seekbar.value = '0'
       seekbar.max = lengthMs.toString()
     }
@@ -231,10 +234,9 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
     }
 
     function durationWatch() {
-      if (audioCtx.state === 'running') {
-        updateDurationText()
-        durationId = setTimeout(durationWatch, 1000)
-      }
+      if (audioCtx.state !== 'running') return
+      updateDurationText()
+      durationId = setTimeout(durationWatch, 1000)
     }
 
     function updateDurationText() {

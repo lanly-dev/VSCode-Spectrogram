@@ -5,8 +5,16 @@ This is an extension that plays and displays spectrograms of mp3 and flac audio 
 
 ## Release Notes
 
+### 3.0.0
+- Added support for `WAV`
+- Added seekbar
+- Added color configuration
+- Fixed bugs
+- Improved treeview
+- New logo and icon
+
 ### 2.0.0
-- Added `flac` support
+- Added support for `FLAC`
 - Added 5-second seeking buttons
 - Greatly reduced extension size
 
@@ -17,7 +25,7 @@ This is an extension that plays and displays spectrograms of mp3 and flac audio 
 - Refactored code
 
 ### 1.0.1
-- Fixed path issue for MacOS
+- Fixed path issue for macOS
 
 ### 1.0.0
 - Initial release of Spectrogram
