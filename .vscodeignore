@@ -3,10 +3,12 @@
 .vscode
 **/*.map
 demo
+eslint.config.mjs
 jsconfig.json
 lab
 media/res
 media/vscodeignore
+node_modules
 src
 tasks.js
 vsc-extension-quickstart.md

@@ -2,19 +2,20 @@
   "name": "spectrogram",
   "displayName": "Spectrogram",
   "description": "Real-time spectrogram",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "publisher": "lanly-dev",
   "engines": {
-    "vscode": "^1.71.0"
+    "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
   ],
   "keywords": [
-    "Audio",
+    "audio",
     "spectrogram",
     "mp3",
-    "flac"
+    "flac",
+    "wav"
   ],
   "icon": "media/spec.png",
   "galleryBanner": {
@@ -111,10 +112,10 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
+    "vscode:prepublish": "npm run task-clean-output && npm run package",
     "vsce-package": "vsce package",
     "package": "webpack --mode production --devtool hidden-source-map",
-    "wp": "webpack",
+    "wp": "webpack --mode development",
     "wp-watch": "webpack --watch",
     "task-clean-output": "node tasks.js clean",
     "lint": "eslint .",
