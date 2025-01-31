@@ -5,18 +5,20 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Future Works]
 - Real-time input mode/recorder
-- Generate spectrogram instead real-time - [this](https://github.com/cwilso/wubwubwub/blob/MixTrack/js/visualizer.js) or [Wavesurfer](https://wavesurfer.xyz/)
+- Generate spectrogram instead of real-time - [this](https://github.com/cwilso/wubwubwub/blob/MixTrack/js/visualizer.js) or [Wavesurfer](https://wavesurfer.xyz/)
 
 ---
 ## [3.0.0] - February 2025
 - Support WAV
 - Add seekbar
-- Add color RBG config
+- Add color RGB config
 - Add duration in treeview
-- New icon and logo
+- New icon and logo<br>
+  <img src='https://github.com/lanly-dev/VSCode-Spectrogram/blob/main/media/vscodeignore/spec.png?raw=true' width='50' title='spec'/>
+  <img src='https://github.com/lanly-dev/VSCode-Spectrogram/blob/main/media/spec.png?raw=true' width='55' title='spec3.0'/>
 
 ### Notes
-- Clicking treeview item some time able trigger playing the song, but due to the autoplay policy, most of the time you have to click play button inside the webview
+- Clicking treeview item sometimes triggers playing the song, but due to the [autoplay policy](https://developer.chrome.com/blog/autoplay), most of the time you have to click the play button inside the webview
 
 ### References
 - Treeview API https://code.visualstudio.com/api/extension-guides/tree-view#view-actions

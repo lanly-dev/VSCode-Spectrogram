@@ -1,7 +1,16 @@
 # Spectrogram
-This is an extension that plays and displays spectrograms of mp3 and flac audio files. Are you curious to see how your favorite songs' spectrograms look? 🦝🤪💭
+This is an extension that plays and displays spectrograms of MP3, FLAC, and WAV audio files. Are you curious to see how your favorite songs' spectrograms look? 🦝🤪💭
 
-![Spectrogram2.0.0](media/vscodeignore/spec-sc3.png)
+![Spectrogram3.0](https://raw.githubusercontent.com/lanly-dev/VSCode-Spectrogram/refs/heads/main/media/vscodeignore/spec-sc4.png)
+
+This extension contributes the following settings:
+
+* `spectrogram.rgbColor`: Set color for rendering spectrogram
+* `spectrogram.showDuration`: Show duration in treeview/file explorer. Disabling it would load file items faster if the directory has many audio files
+
+## Known Issues
+
+Autoplay policy prevents starting the song from selecting the audio file in the treeview.
 
 ## Release Notes
 
