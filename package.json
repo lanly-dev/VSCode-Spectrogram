@@ -40,12 +40,21 @@
       {
         "command": "spectrogram.revealInFileExplorer",
         "title": "Reveal in File Explorer"
+      },
+      {
+        "command": "spectrogram.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
       "commandPalette": [
         {
           "command": "spectrogram.revealInFileExplorer",
+          "when": "false"
+        },
+        {
+          "command": "spectrogram.refresh",
           "when": "false"
         }
       ],

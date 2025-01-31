@@ -81,6 +81,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
           susresBtn.innerHTML = PLAY_ICON
           cancelAnimationFrame(id)
           played += Date.now() - startAt
+          togglePlaybackButtons('PAUSED')
         })
       } else if (isEnded) {
         isEnded = false
@@ -108,6 +109,7 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
           startAt = Date.now()
           draw()
           durationWatch()
+          togglePlaybackButtons('PLAYING')
         })
       }
     }
@@ -215,8 +217,16 @@ const REFRESH_ICON = '<i class="codicon codicon-refresh"></i>'
         seekbar.style.display = 'none'
         break
       case 'READY':
+        susresBtn.innerHTML = PLAY_ICON
+        susresBtn.classList.remove('disabled')
+        susresBtn.disabled = false
+        backBtn.style.display = 'none'
+        forwardBtn.style.display = 'none'
+        seekbar.style.display = 'none'
+        break
+      case 'PAUSED':
       case 'PLAYING':
-        susresBtn.innerHTML = state === 'PLAYING' ? PAUSE_ICON : PLAY_ICON
+        susresBtn.innerHTML = state === 'PAUSED' ? PLAY_ICON : PAUSE_ICON
         susresBtn.classList.remove('disabled')
         susresBtn.disabled = false
         backBtn.style.display = 'inline-block'

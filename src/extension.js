@@ -19,7 +19,7 @@ function activate(context) {
     }
     const { fullFilePath } = file.selection[0]
     const format = fullFilePath.split('.').pop()
-    if (!['flac', 'mp3'].includes(format)) return
+    if (!['flac', 'mp3', 'wav'].includes(format.toLowerCase())) return
 
     const label = path.parse(file.selection[0].label).name
     const songPath = Uri.file(fullFilePath)
