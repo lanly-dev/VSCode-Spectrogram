@@ -14,10 +14,24 @@ class TreeView {
       vscode.commands.executeCommand('revealFileInOS', uri)
     })
 
+    vscode.commands.registerCommand('spectrogram.refresh', () => {
+      specTreeDataProvider.refresh()
+    })
+
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      specTreeDataProvider.refresh()
+    })
+
     return vscode.window.createTreeView('spectrogram', {
       treeDataProvider: specTreeDataProvider,
       showCollapseAll: true
     })
+  }
+
+  static refresh() {
+    const path = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null
+    const specTreeDataProvider = new SpecTreeDataProvider(path)
+    specTreeDataProvider.refresh()
   }
 }
 

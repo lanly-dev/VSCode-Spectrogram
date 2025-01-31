@@ -52,7 +52,14 @@
       "view/item/context": [
         {
           "command": "spectrogram.revealInFileExplorer",
-          "when": "view == spectrogram && viewItem == fileItem",
+          "when": "view == spectrogram",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "spectrogram.refresh",
+          "when": "view == spectrogram",
           "group": "navigation"
         }
       ]
