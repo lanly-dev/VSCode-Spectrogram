@@ -16,8 +16,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - New icon and logo<br>
   <img src='https://github.com/lanly-dev/VSCode-Spectrogram/blob/main/media/vscodeignore/spec.png?raw=true' width='50' title='spec'/>
   <img src='https://github.com/lanly-dev/VSCode-Spectrogram/blob/main/media/spec.png?raw=true' width='55' title='spec3.0'/>
-- webpack 5.97.1 compiled with 1 warning in 3211 ms
-- 28 files, 355.96 KB, 1.96.0
+- webpack 5.97.1 compiled with 1 warning in 9462 ms
+- 28 files, 341.5 KB, 1.96.0
 
 ### Notes
 - Clicking treeview item sometimes triggers playing the song, but due to the [autoplay policy](https://developer.chrome.com/blog/autoplay), most of the time you have to click the play button inside the webview
